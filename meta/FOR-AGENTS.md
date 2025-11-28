@@ -2,7 +2,7 @@
 
 **Purpose**: This document defines how you should operate when working on features using this system.
 
-**When to read this**: Human will point you here with: "Use meta-v2 system" or "Read meta-v2/FOR-AGENTS.md"
+**When to read this**: Human will point you here with: "Use meta system" or "Read meta/FOR-AGENTS.md"
 
 ---
 
@@ -13,6 +13,7 @@
 3. **Respect Limits**: Documents have max lengths - enforce them
 4. **Be Specific**: File paths, line numbers, exact next tasks
 5. **Confirm Major Changes**: Ask before refactoring, big changes
+6. **Be Concise**: Prioritize being concise over verbose descriptions
 
 ---
 
