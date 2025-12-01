@@ -84,16 +84,21 @@ When human uses meta-instructions (shortcuts starting with `>>`), follow these p
    - Look for related subsystem notes in `knowledge/subsystems/`
    - Use this context to ask better questions and understand requirements
 
-2. **Determine feature number**:
+2. **Ensure features directory exists**:
+   - If `ai-agent/features/` doesn't exist, create it: `mkdir -p ai-agent/features`
+
+3. **Determine feature number**:
    - Check `ai-agent/features/` for existing feature folders
    - Find highest number (e.g., 003)
    - Next number is highest + 1 (e.g., 004)
    - If no features exist, start with 001
-2. **Create feature folder**: `ai-agent/features/NNN_feature-name/`
+
+4. **Create feature folder**: `ai-agent/features/NNN_feature-name/`
    - Use 3-digit number (001, 002, etc.)
    - Use kebab-case for feature name
    - Example: `ai-agent/features/004_user-authentication/`
-3. **Copy and customize templates** from `meta/templates/features/`:
+
+5. **Copy and customize templates** from `meta/templates/features/`:
    - `00-FEATURE-OVERVIEW.md`:
      - Set feature name
      - Set status: "Planning"
@@ -101,8 +106,9 @@ When human uses meta-instructions (shortcuts starting with `>>`), follow these p
    - `01-REQUIREMENTS.md`:
      - Add obvious requirements from human's description
      - Add 3-5 clarifying questions (informed by knowledge base)
-4. **Present questions** to human (questions should reference project context from knowledge)
-5. **Wait for answers** (don't proceed to implementation yet)
+
+6. **Present questions** to human (questions should reference project context from knowledge)
+7. **Wait for answers** (don't proceed to implementation yet)
 
 **Response template**:
 ```
@@ -573,12 +579,15 @@ Fix these issues first, then use >>archive
 **Intent**: Initialize project knowledge base (human + QnA combined)
 
 **Protocol**:
-1. **Check for existing knowledge**:
+1. **Ensure knowledge directory exists**:
+   - If `ai-agent/knowledge/` doesn't exist, create it: `mkdir -p ai-agent/knowledge`
+
+2. **Check for existing knowledge**:
    - Look for `ai-agent/knowledge/SYSTEM-OVERVIEW.md`
    - If exists: Read it and identify gaps
    - If doesn't exist: Note that full QnA is needed
 
-2. **Prepare QnA questions**:
+3. **Prepare QnA questions**:
    - Review what human already provided
    - Generate questions for missing information:
      - Project purpose (if not clear)
@@ -589,17 +598,17 @@ Fix these issues first, then use >>archive
      - Development workflow (if not explained)
      - Known gotchas (if not listed)
 
-3. **Conduct QnA session**:
+4. **Conduct QnA session**:
    - Present questions to human
    - Wait for answers
    - Clarify anything ambiguous
 
-4. **Create/Update SYSTEM-OVERVIEW.md**:
+5. **Create/Update SYSTEM-OVERVIEW.md**:
    - Merge human-provided content + QnA answers
    - Fill template completely
    - Save to `ai-agent/knowledge/SYSTEM-OVERVIEW.md`
 
-5. **Confirm completion**:
+6. **Confirm completion**:
    - Summarize what was captured
    - Suggest running `>>scan-repo` next
 
@@ -639,33 +648,36 @@ Next: Run >>scan-repo to map the codebase structure.
 **Intent**: Scan repository and generate knowledge maps
 
 **Protocol**:
-1. **Scan directory structure**:
+1. **Ensure knowledge directory exists**:
+   - If `ai-agent/knowledge/` doesn't exist, create it: `mkdir -p ai-agent/knowledge`
+
+2. **Scan directory structure**:
    - Map folders and key files
    - Identify entry points (main, server, CLI)
    - Find configuration files
    - Note build and test setup
 
-2. **Create REPOSITORY-MAP.md**:
+3. **Create REPOSITORY-MAP.md**:
    - Document directory structure
    - List key files by category
    - Identify main workflows
    - Note file counts and technologies
 
-3. **Analyze code patterns**:
+4. **Analyze code patterns**:
    - Scan for data models/schemas
    - Find API endpoints/routes
    - Identify utilities and helpers
    - Note design patterns
    - Find authentication/authorization setup
 
-4. **Create CONCEPTS-INDEX.md**:
+5. **Create CONCEPTS-INDEX.md**:
    - Catalog discovered patterns
    - List data models with locations
    - Document API structure
    - Note common abstractions
    - Link to relevant files
 
-5. **Confirm completion**:
+6. **Confirm completion**:
    - Summarize what was found
    - Suggest starting first feature
 

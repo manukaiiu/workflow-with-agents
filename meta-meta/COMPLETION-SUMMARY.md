@@ -164,3 +164,26 @@ AI: Created feature folder: features/001_user-authentication/
 Human: Let's do a QnA session about my project
 AI: [Asks 8 structured questions]
 AI: Created knowledge/SYSTEM-OVERVIEW.md
+## Post-Completion Enhancement
+
+**Date**: 2025-12-01
+
+### Change: Removed Empty Folders
+
+**Issue**: Empty `features/` and `knowledge/` folders were unnecessary in the repository.
+
+**Solution**: 
+- Deleted empty folders from repo
+- Updated agent protocol to auto-create folders when needed
+- Updated human documentation to only copy `meta/` folder
+
+**Files Modified**:
+- `/meta/FOR-AGENTS.md` - Added folder creation steps to `>>start`, `>>init-knowledge`, `>>scan-repo`
+- `/README.md` - Simplified copy instructions (only `meta/` folder)
+- `/meta/README.md` - Added note about auto-creation
+
+**Files Deleted**:
+- `/features/` (empty directory)
+- `/knowledge/` (empty directory)
+
+**Result**: Cleaner repository, simpler setup for users.

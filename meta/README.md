@@ -45,8 +45,8 @@ When using this system, your project will be organized like this:
 ```
 project-root/
 └── ai-agent/
-    ├── meta/                           ← This directory (system docs)
-    ├── features/                       ← Feature work
+    ├── meta/                           ← This directory (system docs & templates)
+    ├── features/                       ← Feature work (created by agent)
     │   ├── 001_feature-name/
     │   │   ├── 00-FEATURE-OVERVIEW.md
     │   │   ├── 01-REQUIREMENTS.md
@@ -55,13 +55,15 @@ project-root/
     │   │   └── 04-TESTING-CHECKLIST.md
     │   └── 002_another-feature/
     │       └── [same 5 documents]
-    └── knowledge/                      ← Project knowledge
+    └── knowledge/                      ← Project knowledge (created by agent)
         ├── SYSTEM-OVERVIEW.md
         ├── REPOSITORY-MAP.md
         ├── CONCEPTS-INDEX.md
         └── subsystems/
             └── [subsystem].md
 ```
+
+**Note**: Only the `meta/` folder needs to be copied to your project. The agent automatically creates `features/` and `knowledge/` folders when you run `>>start` or `>>init-knowledge`.
 
 ## Core Concepts
 

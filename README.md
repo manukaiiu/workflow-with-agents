@@ -19,11 +19,11 @@ A simple, structured workflow system that helps AI agents and humans work togeth
 # In your project root, create the ai-agent directory
 mkdir -p ai-agent
 
-# Copy the system folders
+# Copy the meta folder (contains system templates and docs)
 cp -r meta ai-agent/
-cp -r features ai-agent/  # (empty folder, will be populated)
-cp -r knowledge ai-agent/  # (empty folder, will be populated)
 ```
+
+The agent will automatically create `features/` and `knowledge/` folders when needed.
 
 ### 2. Point the agent to the system
 
