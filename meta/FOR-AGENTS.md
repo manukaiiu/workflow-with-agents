@@ -14,12 +14,43 @@
 4. **Be Specific**: File paths, line numbers, exact next tasks
 5. **Confirm Major Changes**: Ask before refactoring, big changes
 6. **Be Concise**: Prioritize being concise over verbose descriptions
+7. **Update Checkboxes**: ALWAYS mark checkboxes `[x]` when tasks/tests/requirements are completed
 
 ---
 
-## The 5 Core Documents
+## Project Structure
 
-Located in `/claude/` (project root):
+The meta system organizes work in this structure:
+
+```
+project-root/ai-agent/
+├── meta/                           ← System documentation (read-only)
+│   ├── FOR-AGENTS.md              ← This file
+│   ├── FOR-HUMANS.md
+│   ├── README.md
+│   └── templates/
+│       ├── features/              ← Feature templates
+│       └── knowledge/             ← Knowledge templates
+├── features/                       ← Active feature work
+│   ├── 001_feature-name/
+│   │   ├── 00-FEATURE-OVERVIEW.md
+│   │   ├── 01-REQUIREMENTS.md
+│   │   ├── 02-IMPLEMENTATION-PLAN.md
+│   │   ├── 03-PROGRESS-LOG.md
+│   │   └── 04-TESTING-CHECKLIST.md
+│   └── 002_another-feature/
+│       └── [same 5 documents]
+└── knowledge/                      ← Project knowledge base
+    ├── SYSTEM-OVERVIEW.md
+    ├── REPOSITORY-MAP.md
+    ├── CONCEPTS-INDEX.md
+    └── subsystems/
+        └── [subsystem].md
+```
+
+## The 5 Core Documents (Per Feature)
+
+Each feature has its own folder in `ai-agent/features/NNN_feature-name/`:
 
 ```
 00-FEATURE-OVERVIEW.md     ← SSOT - read this FIRST every session
@@ -35,30 +66,42 @@ Located in `/claude/` (project root):
 
 ## Meta-Instruction Handlers
 
-When human uses meta-instructions (shortcuts starting with `/`), follow these protocols:
+When human uses meta-instructions (shortcuts starting with `>>`), follow these protocols:
 
-### `/start <feature-name>`
+### `>>start <feature-name>`
 
 **Intent**: Initialize new feature
 
 **Protocol**:
-1. Create `00-FEATURE-OVERVIEW.md` from template
-   - Set feature name
-   - Set status: "Planning"
-   - Set started date
-2. Create `01-REQUIREMENTS.md` from template
-   - Add obvious requirements from human's description
-   - Add 3-5 clarifying questions
-3. Present questions to human
-4. Wait for answers (don't proceed to implementation yet)
+1. **Determine feature number**:
+   - Check `ai-agent/features/` for existing feature folders
+   - Find highest number (e.g., 003)
+   - Next number is highest + 1 (e.g., 004)
+   - If no features exist, start with 001
+2. **Create feature folder**: `ai-agent/features/NNN_feature-name/`
+   - Use 3-digit number (001, 002, etc.)
+   - Use kebab-case for feature name
+   - Example: `ai-agent/features/004_user-authentication/`
+3. **Copy and customize templates** from `meta/templates/features/`:
+   - `00-FEATURE-OVERVIEW.md`:
+     - Set feature name
+     - Set status: "Planning"
+     - Set started date
+   - `01-REQUIREMENTS.md`:
+     - Add obvious requirements from human's description
+     - Add 3-5 clarifying questions
+4. **Present questions** to human
+5. **Wait for answers** (don't proceed to implementation yet)
 
 **Response template**:
 ```
 I'll create the foundation for [feature-name].
 
+Created feature folder: ai-agent/features/NNN_feature-name/
+
 Created:
-- claude/00-FEATURE-OVERVIEW.md (draft)
-- claude/01-REQUIREMENTS.md (draft)
+- 00-FEATURE-OVERVIEW.md (draft)
+- 01-REQUIREMENTS.md (draft)
 
 Questions about requirements:
 1. [Question 1]
@@ -68,11 +111,11 @@ Questions about requirements:
 Please answer these so I can create an implementation plan.
 ```
 
-**Next steps**: After human answers → Create `02-IMPLEMENTATION-PLAN.md` → Wait for approval
+**Next steps**: After human answers → Create `02-IMPLEMENTATION-PLAN.md` in feature folder → Wait for approval
 
 ---
 
-### `/continue`
+### `>>continue`
 
 **Intent**: Resume work on existing feature
 
@@ -105,13 +148,13 @@ Ready to proceed with [next task]?
 
 ---
 
-### `/wrap`
+### `>>wrap`
 
 **Intent**: End session with proper handoff
 
 **Protocol**:
 1. Update `02-IMPLEMENTATION-PLAN.md`:
-   - Mark any completed phases with `[x]`
+   - Mark any completed phases with `[x]` (CRITICAL: Always update checkboxes)
 2. Append to `03-PROGRESS-LOG.md`:
    ```markdown
    ## [YYYY-MM-DD] Session N
@@ -133,7 +176,7 @@ Ready to proceed with [next task]?
    Context: [Any specific knowledge needed]
    Files: [Files to review]
 
-   Quick start: "/continue"
+   Quick start: ">>continue"
    ```
 3. Update `00-FEATURE-OVERVIEW.md` if major milestone reached
 4. Summarize session to human
@@ -153,7 +196,7 @@ Next session: [Specific next task]
 
 ---
 
-### `/status`
+### `>>status`
 
 **Intent**: Quick status check without making changes
 
@@ -185,7 +228,7 @@ Next: [Next task from progress log]
 
 ---
 
-### `/test`
+### `>>test`
 
 **Intent**: Start testing phase
 
@@ -202,7 +245,7 @@ Next: [Next task from progress log]
    - Description
    - Steps to reproduce
    - Expected result
-   - Status checkbox: [ ] Not Tested
+   - Status checkbox: [ ] Not Tested (UPDATE to [x] when test passes)
 
 **Response template**:
 ```
@@ -224,7 +267,7 @@ Ready for testing. Update checklist as you test each scenario.
 
 ---
 
-### `/bug <description>`
+### `>>bug <description>`
 
 **Intent**: Report and handle a bug
 
@@ -263,7 +306,7 @@ I'll investigate [likely file/area] after your answers.
 
 ---
 
-### `/archive`
+### `>>archive`
 
 **Intent**: Feature complete, archive old documents
 
@@ -305,7 +348,7 @@ Feature complete! 🎉
 
 ### Starting New Session (After Break)
 
-When human says `/continue`:
+When human says `>>continue`:
 
 1. **Read SSOT**: `00-FEATURE-OVERVIEW.md`
    - Feature name
@@ -338,7 +381,7 @@ Ready to proceed?
 4. Update relevant docs
 
 **After each phase**:
-1. Mark phase `[x]` in `02-IMPLEMENTATION-PLAN.md`
+1. Mark phase `[x]` in `02-IMPLEMENTATION-PLAN.md` (CRITICAL: Don't forget this step)
 2. Append summary to `03-PROGRESS-LOG.md`
 3. Ask human to verify before next phase
 
@@ -350,7 +393,7 @@ Ready to proceed?
 
 ### Ending Session
 
-When human says `/wrap`:
+When human says `>>wrap`:
 
 1. **Update Plan**: Mark completed phases
 2. **Update Progress Log**: Append session summary with handoff
@@ -469,16 +512,16 @@ The requirements state that we need to handle edge cases:
 
 ### If Documents Don't Exist
 
-On `/continue` if core docs missing:
+On `>>continue` if core docs missing:
 ```
 Error: Core documents not found.
 
-Use /start [feature-name] to initialize a new feature first.
+Use >>start [feature-name] to initialize a new feature first.
 ```
 
 ### If Requirements Incomplete
 
-On `/test` or implementation if requirements unclear:
+On `>>test` or implementation if requirements unclear:
 ```
 Cannot proceed - requirements incomplete.
 
@@ -499,21 +542,173 @@ Cannot archive - tests failing:
 ❌ Test 3: [Description] (see 04-TESTING-CHECKLIST.md)
 ❌ Test 5: [Description]
 
-Fix these issues first, then use /archive
+Fix these issues first, then use >>archive
 ```
+
+---
+
+## Knowledge System
+
+The knowledge system helps you understand and document the project.
+
+### Knowledge Structure
+
+```
+ai-agent/knowledge/
+├── SYSTEM-OVERVIEW.md      ← High-level project info (human or QnA)
+├── REPOSITORY-MAP.md       ← Auto-generated from repo scan
+├── CONCEPTS-INDEX.md       ← Catalog of patterns, APIs, models
+└── subsystems/
+    ├── auth.md            ← Incremental subsystem notes
+    ├── database.md
+    └── api.md
+```
+
+### When to Use Knowledge
+
+**Before starting a feature**:
+1. Read `SYSTEM-OVERVIEW.md` for project context
+2. Check `CONCEPTS-INDEX.md` for relevant patterns
+3. Look for related subsystem notes in `knowledge/subsystems/`
+
+**During feature development**:
+1. When discovering important patterns → Update `CONCEPTS-INDEX.md`
+2. When working deeply in a subsystem → Create/update subsystem note
+3. Keep updates lightweight - focus on reusable insights
+
+**After repository scan**:
+1. Generate `REPOSITORY-MAP.md` with directory structure
+2. Generate `CONCEPTS-INDEX.md` with discovered patterns
+3. Reference specific file locations
+
+### Knowledge Workflows
+
+#### Initial Knowledge: Human-Provided
+
+**When**: Project setup, before first feature
+**Template**: `meta/templates/knowledge/SYSTEM-OVERVIEW.md`
+
+**Two approaches**:
+
+**Approach 1 - Human fills template**:
+- Human creates `ai-agent/knowledge/SYSTEM-OVERVIEW.md`
+- Human fills in project purpose, tech stack, architecture
+- Agent reads this before starting features
+
+**Approach 2 - QnA session**:
+- Agent asks structured questions about project
+- Agent fills `SYSTEM-OVERVIEW.md` based on answers
+- Questions cover: purpose, domain, tech stack, architecture, conventions
+
+**QnA Questions Example**:
+```
+1. What does this project do? What problem does it solve?
+2. What domain is this in? (e.g., e-commerce, fintech, education)
+3. What's the tech stack? (language, framework, database)
+4. What's the high-level architecture? (monolith, microservices, etc.)
+5. What are the major components or subsystems?
+6. Are there important conventions or patterns I should know?
+7. How do developers typically run this locally?
+8. Are there any known gotchas or quirks?
+```
+
+#### Repository Scanning
+
+**When**: After initial setup, before deep feature work
+**Templates**: `REPOSITORY-MAP.md`, `CONCEPTS-INDEX.md`
+
+**Protocol**:
+1. Scan directory structure → Document in `REPOSITORY-MAP.md`
+2. Identify entry points (main files, servers, CLI tools)
+3. Find configuration files
+4. Map major workflows (auth, data processing, etc.)
+5. Catalog patterns in `CONCEPTS-INDEX.md`:
+   - Data models and schemas
+   - API endpoints
+   - Common utilities
+   - Design patterns
+6. Note file counts and technology detection
+
+**Keep it focused**: Don't document everything, focus on:
+- Entry points and main workflows
+- Repeated patterns
+- Key abstractions
+- Important dependencies
+
+#### Incremental Knowledge During Features
+
+**When**: While working on a feature, when you discover something valuable
+**Template**: `meta/templates/knowledge/subsystems/TEMPLATE.md`
+
+**Protocol**:
+1. **Recognize when to document**:
+   - You're working deeply in a specific subsystem
+   - You discover non-obvious patterns
+   - You find gotchas worth noting
+   - You understand a complex workflow
+
+2. **Create/update subsystem note**:
+   - Check if `knowledge/subsystems/[name].md` exists
+   - If not, copy template and fill in
+   - If yes, add to "Recent Changes" section
+
+3. **Keep it brief**:
+   - Purpose of the subsystem
+   - Key files and their roles
+   - Important patterns or gotchas
+   - Related subsystems
+
+4. **Update feature progress log**:
+   ```markdown
+   **Knowledge Updated**:
+   - Created/Updated: knowledge/subsystems/[name].md
+   - Added: [Brief description of what was documented]
+   ```
+
+**Don't over-document**:
+- Not every file needs documentation
+- Focus on insights that will help future work
+- Skip obvious or self-explanatory code
+- Prioritize gotchas and non-obvious patterns
+
+### Knowledge Best Practices
+
+✅ **Do**:
+- Read knowledge docs before starting features
+- Update when you discover valuable insights
+- Keep subsystem notes focused and brief
+- Link between related subsystems
+- Note file locations with `file:line` format
+
+❌ **Don't**:
+- Document everything exhaustively
+- Duplicate information between knowledge files
+- Create knowledge docs for obvious code
+- Let knowledge docs get stale (mark "Last Updated")
+- Spend more time documenting than coding
 
 ---
 
 ## Templates Location
 
-Templates for core documents are in `meta-v2/templates/`:
+Templates are organized by type in `meta/templates/`:
+
+### Feature Templates
+`meta/templates/features/`:
 - `00-FEATURE-OVERVIEW.md`
 - `01-REQUIREMENTS.md`
 - `02-IMPLEMENTATION-PLAN.md`
 - `03-PROGRESS-LOG.md`
 - `04-TESTING-CHECKLIST.md`
 
-When creating new documents, copy template and fill in content.
+### Knowledge Templates
+`meta/templates/knowledge/`:
+- `SYSTEM-OVERVIEW.md` - High-level project information
+- `REPOSITORY-MAP.md` - Auto-generated repository structure
+- `CONCEPTS-INDEX.md` - Catalog of patterns and concepts
+- `subsystems/TEMPLATE.md` - Template for subsystem documentation
+
+When creating new documents, copy appropriate template and fill in content.
 
 ---
 
@@ -534,12 +729,14 @@ When creating new documents, copy template and fill in content.
 
 You're following the protocol correctly if:
 
-✅ Every session starts by reading SSOT
+✅ Every session starts by reading SSOT from the feature folder
+✅ Features are in numbered folders (001_, 002_, etc.)
 ✅ Progress log grows by appending (never recreating)
 ✅ Handoffs include specific next task with file path
 ✅ Documents stay within max length
 ✅ Human can resume work in < 2 minutes
-✅ Only 5 core docs exist (plus archive)
+✅ Only 5 core docs per feature (plus archive)
+✅ Knowledge docs updated when valuable insights discovered
 ✅ No duplicate summaries
 
 ---
@@ -548,17 +745,17 @@ You're following the protocol correctly if:
 
 | Human Says | You Do |
 |-----------|--------|
-| `/start X` | Create SSOT + requirements, ask questions |
-| `/continue` | Read SSOT + log, confirm next task |
-| `/wrap` | Update plan + log, summarize session |
-| `/status` | Show current progress (no changes) |
-| `/test` | Create test checklist |
-| `/bug X` | Log bug, ask questions, investigate |
-| `/archive` | Verify complete, create final summary |
+| `>>start X` | Create numbered feature folder, copy templates, ask questions |
+| `>>continue` | Read SSOT from feature folder, confirm next task |
+| `>>wrap` | Update plan + log, summarize session |
+| `>>status` | Show current progress (no changes) |
+| `>>test` | Create test checklist |
+| `>>bug X` | Log bug, ask questions, investigate |
+| `>>archive` | Verify complete, create final summary |
 
-**Always**: Read SSOT first, be specific, confirm major changes, respect limits.
+**Always**: Read SSOT first, check knowledge docs, be specific, confirm major changes, respect limits, update checkboxes.
 
-**Never**: Create new summaries, duplicate info, exceed max lengths, skip handoffs.
+**Never**: Create new summaries, duplicate info, exceed max lengths, skip handoffs, forget to number features.
 
 ---
 
