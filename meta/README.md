@@ -87,6 +87,11 @@ AI builds and maintains project knowledge to work more efficiently:
 ### Meta-Instructions
 Shortcuts starting with `>>` that expand to full workflows:
 
+**Setup** (first time):
+- `>>init-knowledge` - Setup knowledge base (human + QnA combined)
+- `>>scan-repo` - Scan codebase and generate maps
+
+**Features** (regular work):
 - `>>start feature-name` - Initialize new feature
 - `>>continue` - Resume work
 - `>>wrap` - End session with handoff
@@ -109,16 +114,22 @@ Shortcuts starting with `>>` that expand to full workflows:
 
 ### First Time Setup
 
-**Option 1 - Start with knowledge** (recommended):
-1. Create `ai-agent/knowledge/SYSTEM-OVERVIEW.md` and fill it out
-   - OR do QnA session with AI to create it
-2. Optionally: AI scans repo to create `REPOSITORY-MAP.md`
-3. Start first feature: `>>start my-first-feature`
+**Option 1 - Full knowledge setup** (recommended):
+1. Optionally: Fill out `ai-agent/knowledge/SYSTEM-OVERVIEW.md` with what you know
+2. Run `>>init-knowledge` - AI reads your overview, asks questions to fill gaps
+3. Run `>>scan-repo` - AI scans codebase and creates maps
+4. Start first feature: `>>start my-first-feature`
 
-**Option 2 - Jump right in**:
+**Option 2 - Quick knowledge setup**:
+1. Run `>>init-knowledge` - AI asks questions, creates overview
+2. Start first feature: `>>start my-first-feature`
+3. Skip repo scanning for now (can run `>>scan-repo` anytime)
+
+**Option 3 - Jump right in**:
 1. Say `>>start my-first-feature`
 2. AI learns about your project as it works
 3. Knowledge accumulates naturally
+4. Add formal knowledge later with `>>init-knowledge` and `>>scan-repo`
 
 ### Working on Features
 

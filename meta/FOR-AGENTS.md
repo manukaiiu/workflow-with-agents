@@ -73,7 +73,13 @@ When human uses meta-instructions (shortcuts starting with `>>`), follow these p
 **Intent**: Initialize new feature
 
 **Protocol**:
-1. **Determine feature number**:
+1. **Check knowledge base** (CRITICAL - Do this first):
+   - Read `ai-agent/knowledge/SYSTEM-OVERVIEW.md` if it exists
+   - Check `ai-agent/knowledge/CONCEPTS-INDEX.md` for relevant patterns
+   - Look for related subsystem notes in `knowledge/subsystems/`
+   - Use this context to ask better questions and understand requirements
+
+2. **Determine feature number**:
    - Check `ai-agent/features/` for existing feature folders
    - Find highest number (e.g., 003)
    - Next number is highest + 1 (e.g., 004)
@@ -89,8 +95,8 @@ When human uses meta-instructions (shortcuts starting with `>>`), follow these p
      - Set started date
    - `01-REQUIREMENTS.md`:
      - Add obvious requirements from human's description
-     - Add 3-5 clarifying questions
-4. **Present questions** to human
+     - Add 3-5 clarifying questions (informed by knowledge base)
+4. **Present questions** to human (questions should reference project context from knowledge)
 5. **Wait for answers** (don't proceed to implementation yet)
 
 **Response template**:
@@ -120,9 +126,15 @@ Please answer these so I can create an implementation plan.
 **Intent**: Resume work on existing feature
 
 **Protocol**:
-1. Read `00-FEATURE-OVERVIEW.md` (SSOT)
+1. **Check knowledge base** (Do this first):
+   - Review `ai-agent/knowledge/SYSTEM-OVERVIEW.md` for project context
+   - Check for relevant subsystem notes in `knowledge/subsystems/`
+   - This helps you understand the codebase before diving in
+
+2. **Read feature SSOT**: `00-FEATURE-OVERVIEW.md`
    - Extract: feature name, current status, current phase
-2. Read last entry in `03-PROGRESS-LOG.md`
+
+3. **Read last entry** in `03-PROGRESS-LOG.md`
    - Extract: last completed item, next task
 3. Summarize understanding (max 4 sentences)
 4. State specific next task
@@ -375,21 +387,25 @@ Ready to proceed?
 ### During Work
 
 **For each change**:
-1. Read relevant files
-2. Make changes
-3. Explain what was done (concisely)
-4. Update relevant docs
+1. Check knowledge base for relevant subsystem info
+2. Read relevant files
+3. Make changes
+4. Explain what was done (concisely)
+5. Update relevant docs
 
 **After each phase**:
 1. Mark phase `[x]` in `02-IMPLEMENTATION-PLAN.md` (CRITICAL: Don't forget this step)
 2. Append summary to `03-PROGRESS-LOG.md`
-3. Ask human to verify before next phase
+3. **Consider knowledge updates**: Did you discover patterns worth documenting?
+4. Ask human to verify before next phase
 
 **For bugs/issues**:
 1. Append to `03-PROGRESS-LOG.md` under "Issues"
-2. Analyze root cause
-3. Fix
-4. Update log with resolution
+2. Check knowledge base for relevant subsystem info
+3. Analyze root cause
+4. Fix
+5. Update log with resolution
+6. **Update knowledge** if gotcha is worth documenting
 
 ### Ending Session
 
@@ -547,6 +563,137 @@ Fix these issues first, then use >>archive
 
 ---
 
+### `>>init-knowledge`
+
+**Intent**: Initialize project knowledge base (human + QnA combined)
+
+**Protocol**:
+1. **Check for existing knowledge**:
+   - Look for `ai-agent/knowledge/SYSTEM-OVERVIEW.md`
+   - If exists: Read it and identify gaps
+   - If doesn't exist: Note that full QnA is needed
+
+2. **Prepare QnA questions**:
+   - Review what human already provided
+   - Generate questions for missing information:
+     - Project purpose (if not clear)
+     - Domain context (if not mentioned)
+     - Tech stack details (if incomplete)
+     - Architecture patterns (if not described)
+     - Key conventions (if not documented)
+     - Development workflow (if not explained)
+     - Known gotchas (if not listed)
+
+3. **Conduct QnA session**:
+   - Present questions to human
+   - Wait for answers
+   - Clarify anything ambiguous
+
+4. **Create/Update SYSTEM-OVERVIEW.md**:
+   - Merge human-provided content + QnA answers
+   - Fill template completely
+   - Save to `ai-agent/knowledge/SYSTEM-OVERVIEW.md`
+
+5. **Confirm completion**:
+   - Summarize what was captured
+   - Suggest running `>>scan-repo` next
+
+**Response template**:
+```
+I'll help set up your project knowledge base.
+
+[If SYSTEM-OVERVIEW.md exists:]
+I found your existing system overview. Let me ask a few questions to fill in the gaps:
+
+[If SYSTEM-OVERVIEW.md doesn't exist:]
+I'll ask some questions to understand your project:
+
+Questions:
+1. [Question 1]
+2. [Question 2]
+...
+
+[After answers:]
+Created/Updated: ai-agent/knowledge/SYSTEM-OVERVIEW.md
+
+Captured:
+- Project purpose and domain
+- Tech stack: [summary]
+- Architecture: [summary]
+- Key conventions: [count] documented
+
+Next: Run >>scan-repo to map the codebase structure.
+```
+
+**Next steps**: Human can run `>>scan-repo` or start first feature
+
+---
+
+### `>>scan-repo`
+
+**Intent**: Scan repository and generate knowledge maps
+
+**Protocol**:
+1. **Scan directory structure**:
+   - Map folders and key files
+   - Identify entry points (main, server, CLI)
+   - Find configuration files
+   - Note build and test setup
+
+2. **Create REPOSITORY-MAP.md**:
+   - Document directory structure
+   - List key files by category
+   - Identify main workflows
+   - Note file counts and technologies
+
+3. **Analyze code patterns**:
+   - Scan for data models/schemas
+   - Find API endpoints/routes
+   - Identify utilities and helpers
+   - Note design patterns
+   - Find authentication/authorization setup
+
+4. **Create CONCEPTS-INDEX.md**:
+   - Catalog discovered patterns
+   - List data models with locations
+   - Document API structure
+   - Note common abstractions
+   - Link to relevant files
+
+5. **Confirm completion**:
+   - Summarize what was found
+   - Suggest starting first feature
+
+**Response template**:
+```
+Scanning repository structure...
+
+Created: ai-agent/knowledge/REPOSITORY-MAP.md
+- [X] directories mapped
+- [Y] entry points found
+- [Z] main workflows documented
+
+Created: ai-agent/knowledge/CONCEPTS-INDEX.md
+- [N] data models cataloged
+- [M] API endpoints mapped
+- [P] patterns identified
+
+Key findings:
+- Architecture: [detected type]
+- Entry point: [main file]
+- Test framework: [detected framework]
+
+Your knowledge base is ready! Use >>start [feature-name] to begin.
+```
+
+**Notes**:
+- This can be token-intensive for large repos
+- Focus on high-value information
+- Don't document every file
+- Can be run multiple times as project evolves
+
+---
+
 ## Knowledge System
 
 The knowledge system helps you understand and document the project.
@@ -583,24 +730,36 @@ ai-agent/knowledge/
 
 ### Knowledge Workflows
 
-#### Initial Knowledge: Human-Provided
+#### Initial Knowledge: Combined Approach
 
-**When**: Project setup, before first feature
+**When**: Project setup, before first feature (via `>>init-knowledge`)
 **Template**: `meta/templates/knowledge/SYSTEM-OVERVIEW.md`
 
-**Two approaches**:
+**Combined Human + QnA Approach**:
 
-**Approach 1 - Human fills template**:
-- Human creates `ai-agent/knowledge/SYSTEM-OVERVIEW.md`
-- Human fills in project purpose, tech stack, architecture
-- Agent reads this before starting features
+The best approach combines human-provided information AND agent QnA:
 
-**Approach 2 - QnA session**:
-- Agent asks structured questions about project
-- Agent fills `SYSTEM-OVERVIEW.md` based on answers
-- Questions cover: purpose, domain, tech stack, architecture, conventions
+1. **Human provides initial knowledge** (optional):
+   - Creates `ai-agent/knowledge/SYSTEM-OVERVIEW.md`
+   - Fills in what they know (partial is fine!)
+   - Can skip sections they're unsure about
 
-**QnA Questions Example**:
+2. **Agent reads and identifies gaps**:
+   - Reads any existing SYSTEM-OVERVIEW.md
+   - Identifies missing or unclear information
+   - Prepares targeted questions
+
+3. **Agent conducts QnA**:
+   - Asks questions only about missing information
+   - Clarifies ambiguous points
+   - Fills in gaps from human's answers
+
+4. **Agent merges everything**:
+   - Combines human-provided + QnA answers
+   - Creates comprehensive SYSTEM-OVERVIEW.md
+   - No redundancy, just complete information
+
+**QnA Questions Example** (asked only for missing info):
 ```
 1. What does this project do? What problem does it solve?
 2. What domain is this in? (e.g., e-commerce, fintech, education)
@@ -745,17 +904,19 @@ You're following the protocol correctly if:
 
 | Human Says | You Do |
 |-----------|--------|
-| `>>start X` | Create numbered feature folder, copy templates, ask questions |
-| `>>continue` | Read SSOT from feature folder, confirm next task |
-| `>>wrap` | Update plan + log, summarize session |
+| `>>init-knowledge` | Setup knowledge base: read existing overview, QnA for gaps, merge info |
+| `>>scan-repo` | Scan codebase, generate REPOSITORY-MAP and CONCEPTS-INDEX |
+| `>>start X` | Check knowledge base, create numbered feature folder, ask questions |
+| `>>continue` | Check knowledge base, read SSOT from feature folder, confirm next task |
+| `>>wrap` | Update plan + log, consider knowledge updates, summarize session |
 | `>>status` | Show current progress (no changes) |
 | `>>test` | Create test checklist |
-| `>>bug X` | Log bug, ask questions, investigate |
+| `>>bug X` | Log bug, check knowledge, investigate, update knowledge if needed |
 | `>>archive` | Verify complete, create final summary |
 
-**Always**: Read SSOT first, check knowledge docs, be specific, confirm major changes, respect limits, update checkboxes.
+**Always**: Check knowledge base first, read SSOT, be specific, confirm major changes, respect limits, update checkboxes, document valuable insights.
 
-**Never**: Create new summaries, duplicate info, exceed max lengths, skip handoffs, forget to number features.
+**Never**: Skip knowledge lookup, create new summaries, duplicate info, exceed max lengths, skip handoffs, forget to number features, ignore discovered patterns.
 
 ---
 

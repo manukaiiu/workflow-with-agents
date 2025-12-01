@@ -2,8 +2,13 @@
 
 ## TL;DR
 
-Use **meta-instructions** (shortcuts starting with `>>`) to work with AI on features:
+Use **meta-instructions** (shortcuts starting with `>>`) to work with AI:
 
+**Setup** (first time):
+- `>>init-knowledge` - Set up project knowledge (you + AI QnA)
+- `>>scan-repo` - Scan codebase and create maps
+
+**Features** (regular work):
 - `>>start feature-name` - Start new feature
 - `>>continue` - Resume work
 - `>>wrap` - End session
@@ -81,20 +86,17 @@ ai-agent/knowledge/
 
 ### How to Start
 
-**Option 1 - You describe the project**:
+**Recommended: Combined approach** (best results):
 ```
-Human: I'll fill out the system overview for you.
-[You create ai-agent/knowledge/SYSTEM-OVERVIEW.md and fill it in]
-```
-
-**Option 2 - QnA with AI**:
-```
-Human: Let's do a QnA session so you can understand my project.
-AI: [Asks structured questions about your project]
-AI: [Creates SYSTEM-OVERVIEW.md based on your answers]
+Human: [Optionally fill out knowledge/SYSTEM-OVERVIEW.md with what you know]
+Human: >>init-knowledge
+AI: [Reads your overview, asks questions to fill gaps]
+AI: [Creates complete SYSTEM-OVERVIEW.md]
+Human: >>scan-repo
+AI: [Scans codebase, creates maps]
 ```
 
-**Option 3 - Skip for now**:
+**Quick start** (skip knowledge setup):
 ```
 Human: >>start my-first-feature
 [AI works without project knowledge, learns as it goes]
@@ -104,7 +106,39 @@ You can always add knowledge later!
 
 ---
 
-## Meta-Instructions Reference
+### `>>scan-repo`
+
+**What it does**: Scans your codebase and generates knowledge maps
+**AI response**: Creates REPOSITORY-MAP and CONCEPTS-INDEX with discovered patterns
+
+**Example**:
+```
+Human: >>scan-repo
+AI: Scanning repository structure...
+
+    Created: knowledge/REPOSITORY-MAP.md
+    - 12 directories mapped
+    - 3 entry points found
+    - 5 main workflows documented
+
+    Created: knowledge/CONCEPTS-INDEX.md
+    - 8 data models cataloged
+    - 15 API endpoints mapped
+    - 4 patterns identified
+
+    Key findings:
+    - Architecture: Express.js REST API
+    - Entry point: src/server.ts
+    - Test framework: Jest
+
+    Your knowledge base is ready! Use >>start [feature-name] to begin.
+```
+
+**Next**: Start your first feature with `>>start`
+
+**Note**: This can use many tokens for large repos. AI focuses on high-value info.
+
+---
 
 ### `>>start <feature-name>`
 
