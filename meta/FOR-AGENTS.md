@@ -2,7 +2,12 @@
 
 **Purpose**: This document defines how you should operate when working on features using this system.
 
-**When to read this**: Human will point you here with: "Use meta system" or "Read meta/FOR-AGENTS.md"
+**When to read this**:
+- **First session**: Human will say: "Please read ai-agent/meta/FOR-AGENTS.md - this explains our workflow system."
+- **After context loss** (window closed, crash, new session): Human will say: "Please read ai-agent/meta/FOR-AGENTS.md to understand our workflow system, then >>continue"
+- **During work**: Reference this as needed for specific workflows
+
+**After reading this**: You'll understand the `>>` command system and can start working with `>>init-knowledge` or `>>start`
 
 ---
 

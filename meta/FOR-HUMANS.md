@@ -1,5 +1,19 @@
 # Guide for Humans
 
+## Quick Copy-Paste Messages
+
+**First session** (copy & paste to agent):
+```
+Please read ai-agent/meta/FOR-AGENTS.md - this explains our workflow system.
+```
+
+**After context loss** (agent crashed/closed):
+```
+Please read ai-agent/meta/FOR-AGENTS.md to understand our workflow system, then >>continue
+```
+
+---
+
 ## TL;DR
 
 Use **meta-instructions** (shortcuts starting with `>>`) to work with AI:
@@ -85,6 +99,16 @@ ai-agent/knowledge/
 - Subsystem knowledge accumulates over time
 
 ### How to Start
+
+**Step 0 - First session only** (point agent to the system):
+```
+Please read ai-agent/meta/FOR-AGENTS.md - this explains our workflow system.
+```
+
+**After context loss** (agent window closed, crash, new session):
+```
+Please read ai-agent/meta/FOR-AGENTS.md to understand our workflow system, then >>continue
+```
 
 **Recommended: Combined approach** (best results):
 ```

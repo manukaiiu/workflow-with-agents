@@ -25,9 +25,19 @@ cp -r features ai-agent/  # (empty folder, will be populated)
 cp -r knowledge ai-agent/  # (empty folder, will be populated)
 ```
 
-### 2. Initialize knowledge
+### 2. Point the agent to the system
 
-Start your first session with an AI agent:
+**First time only** - Tell the agent about this meta system:
+
+```
+Please read ai-agent/meta/FOR-AGENTS.md - this explains our workflow system.
+```
+
+The agent will read the documentation and understand how to work with you.
+
+### 3. Initialize knowledge
+
+Now start knowledge setup:
 
 ```
 Human: >>init-knowledge
@@ -38,7 +48,7 @@ Human: >>scan-repo
 AI: [Scans your codebase]
 ```
 
-### 3. Start your first feature
+### 4. Start your first feature
 
 ```
 Human: >>start my-first-feature
