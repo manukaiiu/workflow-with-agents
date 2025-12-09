@@ -36,8 +36,9 @@ project-root/ai-agent/
 │   └── templates/
 │       ├── features/              ← Feature templates
 │       ├── maintenance/           ← Maintenance templates
+│       ├── concept/               ← Concept workflow templates
 │       └── knowledge/             ← Knowledge templates
-├── work/                           ← Active work (features, maintenance, bugs)
+├── work/                           ← Active work (features, maintenance, bugs, concepts)
 │   ├── 001-feat-user-auth/        ← Feature work
 │   │   ├── 00-OVERVIEW.md
 │   │   ├── 01-REQUIREMENTS.md
@@ -48,8 +49,23 @@ project-root/ai-agent/
 │   │   └── 06-PR-MESSAGE.md       ← Optional: PR draft
 │   ├── 002-maint-deps-update/     ← Maintenance work
 │   │   └── [maintenance documents]
-│   └── 003-bug-login-fix/         ← Bug fix work
-│       └── [feature documents]
+│   ├── 003-bug-login-fix/         ← Bug fix work
+│   │   └── [feature documents]
+│   └── 004-concept-new-platform/  ← Concept work (during creation)
+│       ├── 00-OVERVIEW.md
+│       ├── 01-INPUTS/INDEX.md
+│       ├── 02-EXTRACTIONS.md
+│       ├── 03-CONCEPT.md
+│       └── [other concept docs]
+├── concepts/                       ← Finalized concepts (after >>finalize)
+│   └── [name]/v1/
+│       ├── CONCEPT.md
+│       └── CONCEPT-[sub].md
+├── workplans/                      ← Finalized work plans (after >>finalize)
+│   └── [name]/v1/
+│       ├── WORKPLAN.md
+│       ├── ROADMAP.md
+│       └── ROADMAP.mermaid.md
 └── knowledge/                      ← Project knowledge base
     ├── SYSTEM-OVERVIEW.md
     ├── REPOSITORY-MAP.md
@@ -61,15 +77,18 @@ project-root/ai-agent/
 
 ## Work Types
 
-The system supports three work types, each with its own folder prefix:
+The system supports four work types, each with its own folder prefix:
 
 | Type | Prefix | Use For | Templates |
 |------|--------|---------|-----------|
 | Feature | `feat` | New functionality, enhancements | `templates/features/` |
 | Maintenance | `maint` | Dependency updates, refactoring, security audits, build changes | `templates/maintenance/` |
 | Bug | `bug` | Bug fixes | `templates/features/` (lighter usage) |
+| Concept | `concept` | Complex conceptualization, work plans, roadmaps | `templates/concept/` |
 
-**Folder naming**: `NNN-TYPE-name` (e.g., `001-feat-user-auth`, `002-maint-deps-update`, `003-bug-login-fix`)
+**Folder naming**: `NNN-TYPE-name` (e.g., `001-feat-user-auth`, `002-maint-deps-update`, `003-bug-login-fix`, `004-concept-new-platform`)
+
+**Note**: Concept work has a unique lifecycle - it starts in `work/` during creation, then finalized outputs are promoted to top-level `concepts/` and `workplans/` folders.
 
 ## Core Documents
 
@@ -102,7 +121,22 @@ Each work item has its own folder in `ai-agent/work/NNN-TYPE-name/`:
 01-REQUIREMENTS.md         ← Bug description, reproduction, expected behavior
 ```
 
-**Never create other status/summary documents**. If info doesn't fit in these docs, it goes in `03-PROGRESS-LOG.md`.
+**Concepts (`concept`)** - Full conceptualization workflow:
+```
+00-OVERVIEW.md             ← SSOT for concept work status
+01-INPUTS/INDEX.md         ← Inventory of all inputs
+02-EXTRACTIONS.md          ← Extracted information from inputs
+03-CONCEPT.md              ← Main concept document
+03-CONCEPT-[sub].md        ← Sub-concept documents (max 7)
+04-WORKPLAN.md             ← Work breakdown structure
+05-ROADMAP.md              ← Sequencing and dependencies
+05-ROADMAP.mermaid.md      ← Generated Mermaid visualization
+06-PROGRESS-LOG.md         ← Session log (append-only)
+07-REFINEMENT-LOG.md       ← Tracks refinement cycles
+08-OPEN-QUESTIONS.md       ← Questions awaiting human input
+```
+
+**Never create other status/summary documents**. If info doesn't fit in these docs, it goes in `03-PROGRESS-LOG.md` (or `06-PROGRESS-LOG.md` for concepts).
 
 ---
 
@@ -503,6 +537,517 @@ Work complete! 🎉
    ```
 
 **Note**: This does NOT end the session. Continue working after checkpoint.
+
+---
+
+## Concept Workflow Commands
+
+The concept workflow is for complex conceptualization work that involves analyzing inputs, building concepts, creating work plans, and generating roadmaps.
+
+### Intelligent Command Detection
+
+**Agent Behavior**: When human provides input without an explicit `>>` command:
+1. Analyze the prompt for intent
+2. If it matches a command purpose with confidence, follow that workflow
+3. If uncertain, ask: "This sounds like you want to [action]. Should I proceed with `>>[command]`?"
+
+**Examples**:
+- "Here's a PDF about the requirements" → Treat as `>>add-input`
+- "Let's think through what this system needs to do" → Treat as `>>conceptualize`
+- "Can you break this down into tasks?" → Treat as `>>plan`
+
+---
+
+### `>>start concept <name>`
+
+**Intent**: Initialize new concept work
+
+**Protocol**:
+
+1. **Check knowledge base** (as with other work types)
+
+2. **Ensure directories exist**:
+   - `mkdir -p ai-agent/work`
+
+3. **Determine work item number** (same protocol as other types)
+
+4. **Create concept work folder**: `ai-agent/work/NNN-concept-name/`
+   - Create `01-INPUTS/` subfolder
+
+5. **Copy and customize templates** from `meta/templates/concept/`:
+   - `00-OVERVIEW.md`: Set name, status "Gathering", date
+   - `01-INPUTS/INDEX.md`: Empty inventory
+   - `08-OPEN-QUESTIONS.md`: Template ready for questions
+
+6. **Ask about input sources**:
+   - What raw inputs will be analyzed?
+   - Are there URLs, files, or documents to process?
+   - What format are they in?
+
+7. **Checkpoint consideration**: After creating structure, assess if checkpoint needed
+
+**Response template**:
+```
+I'll create the foundation for concept: [name].
+
+Created work folder: ai-agent/work/NNN-concept-name/
+
+Created:
+- 00-OVERVIEW.md (status: Gathering)
+- 01-INPUTS/INDEX.md (empty)
+- 08-OPEN-QUESTIONS.md (ready)
+
+Questions about inputs:
+1. What raw inputs will we analyze? (conversations, documents, PDFs?)
+2. Are there URLs to fetch or files to add?
+3. Any specific areas to focus on?
+
+Use >>add-input [path/url] to add input sources.
+```
+
+---
+
+### `>>add-input <path-or-url>`
+
+**Intent**: Add input source to concept work
+
+**Protocol**:
+
+1. **Determine input type**:
+   - URL: Fetch content and save locally to `01-INPUTS/`
+   - Local file: Copy to `01-INPUTS/`
+   - PDF: Attempt extraction, ask human to confirm accuracy
+
+2. **Add entry to `01-INPUTS/INDEX.md`**:
+   ```markdown
+   ## [Input Name]
+   - **Source**: [path or URL]
+   - **Type**: conversation | document | pdf | web | other
+   - **Size**: [lines/pages/words estimate]
+   - **Added**: [date]
+   - **Status**: [ ] Not processed
+   - **Processing Notes**: [Any issues or considerations]
+   - **Summary**: [Brief description - filled after extraction]
+   ```
+
+3. **Update `00-OVERVIEW.md`** input count
+
+4. **Large Input Handling** (10000+ lines):
+   - Do NOT summarize or skip content
+   - Note in INDEX.md: "Large input - will process in chunks"
+   - Track progress with line ranges
+
+**Response template**:
+```
+Added input: [Name]
+- Source: [path/url]
+- Type: [type]
+- Size: [estimate]
+- Status: Not processed
+
+Updated: 01-INPUTS/INDEX.md
+
+[If large input:]
+Note: This is a large input ([N] lines). Will process in chunks with full attention.
+
+Ready to add more inputs or use >>extract to process.
+```
+
+---
+
+### `>>extract`
+
+**Intent**: Process inputs and extract information
+
+**Protocol**:
+
+1. **Checkpoint consideration**: Before starting large extraction, assess context usage
+   - If high, announce: "I'll set a checkpoint before proceeding with extraction."
+
+2. **For each unprocessed input**:
+   - Read content based on type
+   - For large inputs: process methodically, chunk by chunk
+   - Extract to categories:
+     - Themes & Patterns (T1, T2...)
+     - Requirements (R1, R2...)
+     - Constraints (C1, C2...)
+     - Stakeholders (S1, S2...)
+     - Decisions Already Made (D1, D2...)
+     - Contradictions & Ambiguities (A1, A2...)
+   - Update INDEX.md status to "[x] Extracted"
+
+3. **Create/update `02-EXTRACTIONS.md`**:
+   - Source attribution table with IDs
+   - Full extraction by category
+   - Cross-references between items
+
+4. **Surface questions to `08-OPEN-QUESTIONS.md`**:
+   - Questions discovered during extraction
+   - Full context for each question
+   - Impact description
+
+5. **Cross-reference check**: Ensure all sources are attributed
+
+6. **Update `00-OVERVIEW.md`** status
+
+7. **Present summary and questions to human**
+
+**Response template**:
+```
+Extraction complete for [N] inputs.
+
+Extracted:
+- [N] themes identified (T1-TN)
+- [N] requirements captured (R1-RN)
+- [N] constraints noted (C1-CN)
+- [N] decisions found (D1-DN)
+- [N] ambiguities flagged (A1-AN)
+
+Updated:
+- 02-EXTRACTIONS.md
+- 01-INPUTS/INDEX.md (statuses)
+- 08-OPEN-QUESTIONS.md ([N] questions)
+
+[If questions exist:]
+There are [N] open questions in 08-OPEN-QUESTIONS.md.
+Please review and add your responses, then use >>continue.
+
+Ready for >>conceptualize when questions are resolved.
+```
+
+---
+
+### `>>conceptualize`
+
+**Intent**: Build concept from extractions
+
+**Protocol**:
+
+1. **Review `02-EXTRACTIONS.md`**
+
+2. **Checkpoint consideration**: Assess context before deep work
+
+3. **Structure concept**:
+   - Identify main concept scope
+   - Identify sub-concepts (max 7, or suggest splitting)
+   - Define relationships and dependencies
+
+4. **Create/update `03-CONCEPT.md`**:
+   - Vision (2-3 sentences)
+   - Scope (In/Out with rationale)
+   - Sub-concepts table (with links)
+   - Core concept sections with source references (R1, T2, etc.)
+   - Non-technical aspects
+   - Dependencies
+   - Risks & Mitigations
+   - Success Criteria
+   - Traceability matrix
+
+5. **Create sub-concept documents** as needed (max 7):
+   - `03-CONCEPT-[name].md` for each
+   - Link from main concept
+
+6. **Cross-reference update**: Update all traceability links
+
+7. **Proactive refinement check**: Flag any inconsistencies with extractions
+
+8. **Present to human for feedback**
+
+**Response template**:
+```
+Concept structure created.
+
+Main Concept: [Name]
+- Vision: [Brief]
+- In Scope: [N] items
+- Out of Scope: [N] items (with rationale)
+
+Sub-Concepts: [N] (max 7)
+1. [Name] - [Brief description]
+2. [Name] - [Brief description]
+...
+
+Created/Updated:
+- 03-CONCEPT.md
+- 03-CONCEPT-[sub1].md
+- 03-CONCEPT-[sub2].md
+
+Traceability: All concept elements linked to source requirements/themes.
+
+[If issues found:]
+Note: Found [N] inconsistencies with extractions - see 08-OPEN-QUESTIONS.md
+
+Ready for >>plan when concept is approved.
+```
+
+---
+
+### `>>plan`
+
+**Intent**: Generate work plan from concept
+
+**Protocol**:
+
+1. **Ask format first** (CRITICAL):
+   ```
+   What format would you like for the work plan?
+   - `generic` - Flexible phases/work-packages/tasks
+   - `jira` - Epics/Stories (with optional sub-tasks)
+   - `github` - Issues with labels and milestones
+   - `custom` - Describe your structure
+   ```
+
+2. **Wait for human response**
+
+3. **Generate `04-WORKPLAN.md`** in chosen format:
+   - Overview with totals
+   - Traceability matrix linking to concept
+   - Phases/Epics with work packages/stories
+   - Tasks with types and dependencies
+   - Progress summary
+
+4. **Cross-reference update**: Link all items to concept elements
+
+5. **Present for feedback**
+
+**Response template**:
+```
+Work plan created in [format] format.
+
+Overview:
+- Phases/Epics: [N]
+- Work Packages/Stories: [N]
+- Tasks: [N]
+- Complexity: [High/Medium/Low]
+
+Structure:
+Phase 1: [Name] - [N] work packages
+Phase 2: [Name] - [N] work packages
+...
+
+Created: 04-WORKPLAN.md
+
+All items traced to concept elements.
+
+Ready for >>roadmap when plan is approved.
+```
+
+---
+
+### `>>roadmap`
+
+**Intent**: Generate roadmap with dependencies and visualization
+
+**Protocol**:
+
+1. **Analyze dependencies** from `04-WORKPLAN.md`
+   - Identify critical path
+   - Find parallel opportunities
+   - Note bottlenecks
+
+2. **Generate `05-ROADMAP.md`**:
+   - Dependency analysis
+   - Sequence waves (Foundation, Core, Integration, etc.)
+   - Milestones
+   - Risk points
+
+3. **Generate `05-ROADMAP.mermaid.md`**:
+   - Dependency graph (mermaid graph LR)
+   - Timeline view if dates available (mermaid gantt)
+   - Critical path highlight
+   - Status overview (mermaid pie)
+
+4. **Update `00-OVERVIEW.md`** status
+
+5. **Present to human for review**
+
+**Response template**:
+```
+Roadmap generated.
+
+Dependency Analysis:
+- Critical Path: [Brief description]
+- Parallel Opportunities: [Brief description]
+
+Waves:
+- Wave 1 (Foundation): [N] work packages - can start immediately
+- Wave 2 (Core): [N] work packages - after Wave 1
+- Wave 3 (Integration): [N] work packages - after Wave 2
+...
+
+Milestones: [N] defined
+
+Created:
+- 05-ROADMAP.md
+- 05-ROADMAP.mermaid.md (visual diagrams)
+
+Ready for >>finalize when roadmap is approved, or >>refine [phase] for changes.
+```
+
+---
+
+### `>>refine <phase>`
+
+**Intent**: Enter refinement cycle at specified phase
+
+**Syntax**: `>>refine extract` | `>>refine concept` | `>>refine plan` | `>>refine roadmap`
+
+**Protocol**:
+
+1. **Log in `07-REFINEMENT-LOG.md`**:
+   ```markdown
+   ## Refinement Cycle [N]
+   **Date**: [date]
+   **Entry Point**: [phase]
+   **Trigger**: Human request | Agent detection
+   **Version**: [current version]
+
+   ### Changes Made
+   [To be filled]
+
+   ### Cross-Reference Updates
+   - [ ] Updated traceability in [doc]
+   - [ ] Updated source references in [doc]
+   ```
+
+2. **Apply changes to entry phase**
+
+3. **Cascade forward** (CRITICAL):
+   - `extract` → concept → plan → roadmap
+   - `concept` → plan → roadmap
+   - `plan` → roadmap
+   - `roadmap` → only roadmap
+
+4. **Update ALL cross-references** in affected documents
+
+5. **Update `00-OVERVIEW.md`**
+
+6. **Notify human of all cascading changes**
+
+**Response template**:
+```
+Refinement cycle [N] started at [phase].
+
+Changes made:
+- [Phase]: [Changes]
+
+Cascaded to:
+- [Next phase]: [Changes]
+- [Next phase]: [Changes]
+
+Cross-references updated:
+- [List of documents]
+
+Updated: 07-REFINEMENT-LOG.md
+
+Refinement complete. Ready to continue.
+```
+
+**Proactive Refinement Detection**:
+Agent should suggest refinement when detecting:
+- Inconsistencies between documents
+- New information contradicting existing content
+- Gaps in traceability
+- Scope changes implied by recent inputs
+
+---
+
+### `>>finalize`
+
+**Intent**: Complete concept work and promote to top-level folders
+
+**Protocol**:
+
+1. **Verify completeness**:
+   - All inputs processed (check INDEX.md)
+   - No unresolved questions in `08-OPEN-QUESTIONS.md`
+   - Concept, workplan, and roadmap complete
+
+2. **Determine version**:
+   - Check if `ai-agent/concepts/[name]/` exists
+   - If new: create `v1/`
+   - If exists: create next version `vN/`
+
+3. **Create finalized folders**:
+   - `ai-agent/concepts/[name]/vN/`
+   - `ai-agent/workplans/[name]/vN/`
+
+4. **Copy finalized documents**:
+   - Concept docs → `concepts/[name]/vN/`
+   - Workplan + roadmap → `workplans/[name]/vN/`
+   - Create `INPUTS-SUMMARY.md` in concept folder
+
+5. **Update working folder** status to "Finalized"
+
+6. **Ask human**: Archive or keep working folder?
+
+**Response template**:
+```
+Verifying completeness...
+✓ All inputs processed
+✓ No unresolved questions
+✓ Concept complete
+✓ Work plan complete
+✓ Roadmap complete
+
+Finalizing...
+
+Created:
+- ai-agent/concepts/[name]/v1/
+  - CONCEPT.md
+  - CONCEPT-[sub].md (x[N])
+  - INPUTS-SUMMARY.md
+- ai-agent/workplans/[name]/v1/
+  - WORKPLAN.md
+  - ROADMAP.md
+  - ROADMAP.mermaid.md
+
+Updated: 00-OVERVIEW.md (status: Finalized)
+
+Concept work complete! 🎉
+
+Archive the working folder? (y/n)
+```
+
+---
+
+### `>>new-version`
+
+**Intent**: Create new version for major concept revision
+
+**When to use**:
+- Weeks have passed with significant changes
+- New major inputs (meetings, discoveries)
+- Fundamental direction change
+
+**Protocol**:
+
+1. **Create new work folder**: `NNN-concept-name-v2`
+
+2. **Copy current state** as starting point
+
+3. **Reference previous version** in `00-OVERVIEW.md`
+
+4. **Fresh `07-REFINEMENT-LOG.md`** for new version
+
+5. **Ready to process new inputs** through full workflow
+
+**Response template**:
+```
+Creating new version for concept: [name]
+
+Created: ai-agent/work/NNN-concept-name-v2/
+- Copied current state as starting point
+- Fresh refinement log
+- Reference to v1 in overview
+
+Ready to:
+- >>add-input [new inputs]
+- >>refine [phase] for updates
+- >>continue with changes
+
+What new inputs or changes should we process?
+```
 
 ---
 
@@ -1067,6 +1612,21 @@ Templates are organized by type in `meta/templates/`:
 - `03-PROGRESS-LOG.md` - Session log
 - `04-TESTING-CHECKLIST.md` - Test scenarios
 
+### Concept Templates
+`meta/templates/concept/`:
+- `00-OVERVIEW.md` - SSOT for concept work
+- `01-INPUTS-INDEX.md` - Input inventory (goes in `01-INPUTS/` folder)
+- `02-EXTRACTIONS.md` - Extracted information with IDs
+- `03-CONCEPT.md` - Main concept document
+- `03-CONCEPT-SUBCONCEPT.md` - Sub-concept template
+- `04-WORKPLAN.md` - Generic work plan format
+- `04-WORKPLAN-JIRA.md` - Jira format work plan
+- `05-ROADMAP.md` - Sequencing and dependencies
+- `05-ROADMAP-MERMAID.md` - Mermaid visualization template
+- `06-PROGRESS-LOG.md` - Session log for concepts
+- `07-REFINEMENT-LOG.md` - Refinement cycle tracking
+- `08-OPEN-QUESTIONS.md` - Questions awaiting human input
+
 ### Knowledge Templates
 `meta/templates/knowledge/`:
 - `SYSTEM-OVERVIEW.md` - High-level project information
@@ -1124,11 +1684,27 @@ You're following the protocol correctly if:
 | `>>bug X` | Log bug, check knowledge, investigate, update knowledge if needed |
 | `>>archive` | Verify complete, create final summary |
 
-**Work Types**: `feat` (feature), `maint` (maintenance), `bug` (bug fix)
+**Concept Workflow Commands**:
+
+| Human Says | You Do |
+|-----------|--------|
+| `>>start concept X` | Create concept work folder, setup inputs structure |
+| `>>add-input [path]` | Add input source, update INDEX.md |
+| `>>extract` | Process inputs, create extractions with IDs (T1, R1, etc.) |
+| `>>conceptualize` | Build concept from extractions (max 7 sub-concepts) |
+| `>>plan` | Ask format first, generate work plan |
+| `>>roadmap` | Generate roadmap + Mermaid visualization |
+| `>>refine [phase]` | Refinement cycle with cascade (extract→concept→plan→roadmap) |
+| `>>finalize` | Promote to concepts/ and workplans/ folders |
+| `>>new-version` | Create new version for major revision |
+
+**Work Types**: `feat` (feature), `maint` (maintenance), `bug` (bug fix), `concept` (conceptualization)
 
 **Always**: Check knowledge base first, read SSOT, be specific, confirm major changes, respect limits, update checkboxes, document valuable insights, do knowledge checkpoint at wrap.
 
 **Never**: Skip knowledge lookup, create new summaries, duplicate info, exceed max lengths, skip handoffs, use wrong folder numbering, ignore discovered patterns.
+
+**Concept-Specific**: Always ask format before >>plan, cascade changes through >>refine, update cross-references on every change, don't skip/summarize large inputs.
 
 ---
 

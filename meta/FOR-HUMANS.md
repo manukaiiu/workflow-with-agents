@@ -23,14 +23,23 @@ Use **meta-instructions** (shortcuts starting with `>>`) to work with AI:
 - `>>scan-repo` - Scan codebase and create maps
 
 **Work** (regular work):
-- `>>start [TYPE] name` - Start new work (feat/maint/bug)
+- `>>start [TYPE] name` - Start new work (feat/maint/bug/concept)
 - `>>continue` - Resume work
 - `>>wrap` - End session
 - `>>checkpoint` - Capture knowledge mid-session
 - `>>status` - Get current status
 - `>>test` - Start testing phase
 
-**Work Types**: `feat` (feature), `maint` (maintenance), `bug` (bug fix)
+**Concept Work** (for complex planning):
+- `>>start concept name` - Start concept work
+- `>>add-input [path]` - Add input sources
+- `>>extract` - Process inputs
+- `>>conceptualize` - Build concept
+- `>>plan` - Generate work plan
+- `>>roadmap` - Generate roadmap
+- `>>finalize` - Complete and promote
+
+**Work Types**: `feat` (feature), `maint` (maintenance), `bug` (bug fix), `concept` (conceptualization)
 
 That's it. AI handles the rest.
 
@@ -43,10 +52,15 @@ The meta system organizes your work like this:
 ```
 project-root/ai-agent/
 ├── meta/               ← System docs (you're reading these)
-├── work/               ← Your work goes here (features, maintenance, bugs)
+├── work/               ← Active work (features, maintenance, bugs, concepts)
 │   ├── 001-feat-login/       ← Feature work
 │   ├── 002-maint-deps/       ← Maintenance work
-│   └── 003-bug-auth-fix/     ← Bug fix work
+│   ├── 003-bug-auth-fix/     ← Bug fix work
+│   └── 004-concept-platform/ ← Concept work (during creation)
+├── concepts/           ← Finalized concepts (after >>finalize)
+│   └── [name]/v1/
+├── workplans/          ← Finalized work plans (after >>finalize)
+│   └── [name]/v1/
 └── knowledge/          ← Project knowledge base
     ├── SYSTEM-OVERVIEW.md
     ├── COMMANDS.md           ← Project-specific commands
@@ -60,6 +74,7 @@ project-root/ai-agent/
 | Feature | `feat` | New functionality, enhancements |
 | Maintenance | `maint` | Dependency updates, refactoring, security audits |
 | Bug | `bug` | Bug fixes |
+| Concept | `concept` | Complex conceptualization, work plans, roadmaps |
 
 ## The Document System
 
@@ -377,6 +392,226 @@ AI: Verifying completion...
 
     Feature complete! 🎉
 ```
+
+---
+
+## Concept Workflow
+
+The concept workflow is for complex planning work that involves:
+- Analyzing diverse inputs (conversations, documents, PDFs)
+- Building structured concepts with sub-concepts
+- Creating work plans and roadmaps
+- Iterative refinement
+
+### When to Use Concept Workflow
+
+Use `>>start concept` when you need to:
+- Process large amounts of raw input (meeting notes, conversations, requirements docs)
+- Build a structured concept from messy inputs
+- Create a work plan with phases and tasks
+- Generate a roadmap with dependencies
+
+**Don't use** for simple features - use `>>start feat` instead.
+
+### Concept Workflow Overview
+
+```
+GATHER → EXTRACT → CONCEPTUALIZE → PLAN → ROADMAP → [REFINE] → FINALIZE
+```
+
+1. **Gather**: Add inputs (`>>add-input`)
+2. **Extract**: Process inputs into structured data (`>>extract`)
+3. **Conceptualize**: Build concept from extractions (`>>conceptualize`)
+4. **Plan**: Generate work plan (`>>plan`)
+5. **Roadmap**: Create dependency map (`>>roadmap`)
+6. **Refine**: Iterate on any phase (`>>refine [phase]`)
+7. **Finalize**: Promote to top-level folders (`>>finalize`)
+
+### Concept Commands
+
+#### `>>start concept <name>`
+Starts a new concept work item.
+
+```
+Human: >>start concept new-platform-design
+AI: Created work folder: ai-agent/work/001-concept-new-platform-design/
+
+    Questions about inputs:
+    1. What raw inputs will we analyze?
+    2. Are there URLs to fetch or files to add?
+
+    Use >>add-input [path/url] to add sources.
+```
+
+#### `>>add-input <path-or-url>`
+Adds an input source for analysis.
+
+```
+Human: >>add-input ./conversations/planning-meeting.json
+AI: Added input: planning-meeting.json
+    - Type: conversation
+    - Size: ~5000 lines
+    - Status: Not processed
+
+    Ready to add more or use >>extract.
+```
+
+**Note**: For large inputs (10000+ lines), AI processes everything - no summarization or skipping.
+
+#### `>>extract`
+Processes inputs and extracts structured information.
+
+```
+Human: >>extract
+AI: Extraction complete.
+
+    Extracted:
+    - 12 themes (T1-T12)
+    - 8 requirements (R1-R8)
+    - 3 constraints (C1-C3)
+    - 2 ambiguities (A1-A2)
+
+    Open questions: 4 (see 08-OPEN-QUESTIONS.md)
+    Please review and add your responses.
+```
+
+#### `>>conceptualize`
+Builds concept structure from extractions.
+
+```
+Human: >>conceptualize
+AI: Concept structure created.
+
+    Main Concept: New Platform Design
+    - 5 sub-concepts defined
+    - All elements traced to sources
+
+    Ready for >>plan when approved.
+```
+
+#### `>>plan`
+Generates work plan (asks for format first).
+
+```
+Human: >>plan
+AI: What format for the work plan?
+    - generic (phases/work-packages/tasks)
+    - jira (Epics/Stories)
+    - github (Issues/Milestones)
+    - custom
+
+Human: jira
+AI: Work plan created in Jira format.
+    - 4 Epics
+    - 18 Stories
+    - All traced to concept elements
+```
+
+#### `>>roadmap`
+Generates roadmap with Mermaid visualization.
+
+```
+Human: >>roadmap
+AI: Roadmap generated.
+
+    Waves:
+    - Wave 1 (Foundation): 4 work packages
+    - Wave 2 (Core): 6 work packages
+    - Wave 3 (Integration): 4 work packages
+
+    Created:
+    - 05-ROADMAP.md
+    - 05-ROADMAP.mermaid.md (visual diagrams)
+```
+
+#### `>>refine <phase>`
+Enters refinement cycle at specified phase.
+
+```
+Human: >>refine concept
+AI: Refinement cycle started at concept.
+
+    What changes should I make?
+
+Human: Add security as a sub-concept
+AI: Changes made:
+    - Concept: Added security sub-concept
+    - Cascaded to: plan, roadmap
+    - Cross-references updated
+```
+
+#### `>>finalize`
+Completes concept work and promotes to top-level folders.
+
+```
+Human: >>finalize
+AI: Verifying completeness...
+    ✓ All inputs processed
+    ✓ No open questions
+    ✓ Concept complete
+
+    Created:
+    - ai-agent/concepts/new-platform-design/v1/
+    - ai-agent/workplans/new-platform-design/v1/
+
+    Concept work complete! 🎉
+```
+
+#### `>>new-version`
+Creates new version for major revisions (weeks later, new inputs).
+
+```
+Human: >>new-version
+AI: Creating new version for concept: new-platform-design
+
+    Created: ai-agent/work/002-concept-new-platform-design-v2/
+    Ready for new inputs and changes.
+```
+
+### Open Questions Workflow
+
+During concept work, AI generates questions in `08-OPEN-QUESTIONS.md`:
+
+1. AI adds questions with full context
+2. You add answers in "Human Response" sections
+3. Run `>>continue` for AI to process answers
+4. Resolved questions move to archive
+
+### Concept Document Structure
+
+```
+ai-agent/work/NNN-concept-name/
+├── 00-OVERVIEW.md              ← SSOT for concept work
+├── 01-INPUTS/
+│   └── INDEX.md               ← Inventory of all inputs
+├── 02-EXTRACTIONS.md          ← Structured data from inputs
+├── 03-CONCEPT.md              ← Main concept
+├── 03-CONCEPT-[sub].md        ← Sub-concepts (max 7)
+├── 04-WORKPLAN.md             ← Work breakdown
+├── 05-ROADMAP.md              ← Dependency analysis
+├── 05-ROADMAP.mermaid.md      ← Visual diagrams
+├── 06-PROGRESS-LOG.md         ← Session log
+├── 07-REFINEMENT-LOG.md       ← Refinement tracking
+└── 08-OPEN-QUESTIONS.md       ← Questions for human input
+```
+
+### Versioning
+
+Finalized concepts support versions:
+
+```
+ai-agent/concepts/[name]/
+├── v1/                         ← Original version
+│   ├── CONCEPT.md
+│   └── CONCEPT-[sub].md
+└── v2/                         ← Major revision
+    └── ...
+```
+
+Use `>>new-version` when:
+- Weeks have passed with significant changes
+- New major inputs (meetings, discoveries)
+- Fundamental direction change
 
 ---
 

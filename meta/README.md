@@ -1,6 +1,6 @@
 # Meta Documentation System
 
-**Purpose**: Streamlined system for managing development work (features, maintenance, bugs) and project knowledge with AI assistance.
+**Purpose**: Streamlined system for managing development work (features, maintenance, bugs, concepts) and project knowledge with AI assistance.
 
 ## What's Here
 
@@ -24,6 +24,19 @@ meta/
     │   ├── 02-IMPLEMENTATION-PLAN.md
     │   ├── 03-PROGRESS-LOG.md
     │   └── 04-TESTING-CHECKLIST.md
+    ├── concept/           ← Concept workflow templates
+    │   ├── 00-OVERVIEW.md
+    │   ├── 01-INPUTS-INDEX.md
+    │   ├── 02-EXTRACTIONS.md
+    │   ├── 03-CONCEPT.md
+    │   ├── 03-CONCEPT-SUBCONCEPT.md
+    │   ├── 04-WORKPLAN.md
+    │   ├── 04-WORKPLAN-JIRA.md
+    │   ├── 05-ROADMAP.md
+    │   ├── 05-ROADMAP-MERMAID.md
+    │   ├── 06-PROGRESS-LOG.md
+    │   ├── 07-REFINEMENT-LOG.md
+    │   └── 08-OPEN-QUESTIONS.md
     └── knowledge/         ← Project knowledge templates
         ├── SYSTEM-OVERVIEW.md
         ├── REPOSITORY-MAP.md
@@ -37,7 +50,7 @@ meta/
 ### For Humans
 → Read `FOR-HUMANS.md` (5 minutes)
 
-**Starting new work**: Say `>>start [TYPE] name` (TYPE: feat/maint/bug)
+**Starting new work**: Say `>>start [TYPE] name` (TYPE: feat/maint/bug/concept)
 **Continuing work**: Say `>>continue`
 **Ending session**: Say `>>wrap`
 **Mid-session checkpoint**: Say `>>checkpoint`
@@ -67,8 +80,23 @@ project-root/
     │   │   └── 06-PR-MESSAGE.md        ← Optional
     │   ├── 002-maint-deps-update/      ← Maintenance work
     │   │   └── [maintenance documents]
-    │   └── 003-bug-login-fix/          ← Bug fix work
-    │       └── [feature documents]
+    │   ├── 003-bug-login-fix/          ← Bug fix work
+    │   │   └── [feature documents]
+    │   └── 004-concept-platform/       ← Concept work (during creation)
+    │       ├── 00-OVERVIEW.md
+    │       ├── 01-INPUTS/INDEX.md
+    │       ├── 02-EXTRACTIONS.md
+    │       ├── 03-CONCEPT.md
+    │       └── [other concept docs]
+    ├── concepts/                       ← Finalized concepts (after >>finalize)
+    │   └── [name]/v1/
+    │       ├── CONCEPT.md
+    │       └── CONCEPT-[sub].md
+    ├── workplans/                      ← Finalized work plans (after >>finalize)
+    │   └── [name]/v1/
+    │       ├── WORKPLAN.md
+    │       ├── ROADMAP.md
+    │       └── ROADMAP.mermaid.md
     └── knowledge/                      ← Project knowledge (created by agent)
         ├── SYSTEM-OVERVIEW.md
         ├── REPOSITORY-MAP.md
@@ -78,20 +106,21 @@ project-root/
             └── [subsystem].md
 ```
 
-**Note**: Only the `meta/` folder needs to be copied to your project. The agent automatically creates `work/` and `knowledge/` folders when you run `>>start` or `>>init-knowledge`.
+**Note**: Only the `meta/` folder needs to be copied to your project. The agent automatically creates `work/`, `knowledge/`, `concepts/`, and `workplans/` folders as needed. Suggestion is to add an `ai-agent` folder (or similar), which is the new home of the `meta/` folder and the agent created folders and documents.
 
 ## Core Concepts
 
 ### Work Types
-The system supports three work types:
+The system supports four work types:
 
 | Type | Prefix | Use For |
 |------|--------|---------|
 | Feature | `feat` | New functionality, enhancements |
 | Maintenance | `maint` | Dependency updates, refactoring, security audits |
 | Bug | `bug` | Bug fixes |
+| Concept | `concept` | Complex conceptualization, work plans, roadmaps |
 
-Each work item gets a numbered folder: `NNN-TYPE-name` (e.g., `001-feat-user-auth`)
+Each work item gets a numbered folder: `NNN-TYPE-name` (e.g., `001-feat-user-auth`, `002-concept-platform`)
 
 ### Core Documents
 All work types share these core documents:
@@ -123,7 +152,7 @@ Shortcuts starting with `>>` that expand to full workflows:
 - `>>scan-repo` - Scan codebase and generate maps
 
 **Work** (regular work):
-- `>>start [TYPE] name` - Initialize new work (feat/maint/bug)
+- `>>start [TYPE] name` - Initialize new work (feat/maint/bug/concept)
 - `>>continue` - Resume work
 - `>>wrap` - End session with handoff
 - `>>checkpoint` - Capture knowledge mid-session
@@ -132,9 +161,20 @@ Shortcuts starting with `>>` that expand to full workflows:
 - `>>bug description` - Report and fix bug
 - `>>archive` - Complete and archive work
 
+**Concept work** (for complex planning):
+- `>>start concept name` - Start concept work
+- `>>add-input [path]` - Add input sources
+- `>>extract` - Process inputs into structured data
+- `>>conceptualize` - Build concept from extractions
+- `>>plan` - Generate work plan (asks format first)
+- `>>roadmap` - Generate roadmap with Mermaid visualization
+- `>>refine [phase]` - Enter refinement cycle
+- `>>finalize` - Promote to concepts/ and workplans/
+- `>>new-version` - Create new version for major revision
+
 ## Philosophy
 
-1. **Work Types**: Features, maintenance, and bugs each have appropriate documentation
+1. **Work Types**: Features, maintenance, bugs, and concepts each have appropriate documentation
 2. **Knowledge Accumulation**: Insights from one task help with later tasks
 3. **Separation of Concerns**: Humans read FOR-HUMANS, agents read FOR-AGENTS
 4. **Meta-instructions**: Simple shortcuts expand to full protocols
@@ -142,6 +182,7 @@ Shortcuts starting with `>>` that expand to full workflows:
 6. **Append-only log**: Never create duplicate summaries
 7. **Context preservation**: Knowledge checkpoints prevent loss in long sessions
 8. **Conciseness**: Prioritize clarity and brevity
+9. **Traceability**: Concept work maintains cross-references throughout
 
 ## Getting Started
 
@@ -199,13 +240,16 @@ Use `>>checkpoint` to capture knowledge before context compression:
 
 ## Key Features
 
-✅ **Work types**: Features, maintenance, and bugs with appropriate templates
+✅ **Work types**: Features, maintenance, bugs, and concepts with appropriate templates
+✅ **Concept workflow**: Full lifecycle for complex planning (gather→extract→conceptualize→plan→roadmap)
 ✅ **Knowledge retention**: AI remembers project insights across sessions
 ✅ **Clear organization**: Numbered folders with type prefix
 ✅ **No context loss**: Resume work in < 2 minutes
 ✅ **Knowledge checkpoints**: Preserve insights in long sessions
 ✅ **Automated updates**: AI maintains checkboxes and progress
 ✅ **Template-based**: Consistent structure every time
+✅ **Mermaid roadmaps**: Visual dependency graphs for concept work
+✅ **Versioning**: Major concept revisions tracked in version folders
 
 ## Success Metrics
 
