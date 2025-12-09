@@ -22,12 +22,15 @@ Use **meta-instructions** (shortcuts starting with `>>`) to work with AI:
 - `>>init-knowledge` - Set up project knowledge (you + AI QnA)
 - `>>scan-repo` - Scan codebase and create maps
 
-**Features** (regular work):
-- `>>start feature-name` - Start new feature
+**Work** (regular work):
+- `>>start [TYPE] name` - Start new work (feat/maint/bug)
 - `>>continue` - Resume work
 - `>>wrap` - End session
+- `>>checkpoint` - Capture knowledge mid-session
 - `>>status` - Get current status
 - `>>test` - Start testing phase
+
+**Work Types**: `feat` (feature), `maint` (maintenance), `bug` (bug fix)
 
 That's it. AI handles the rest.
 
@@ -40,29 +43,51 @@ The meta system organizes your work like this:
 ```
 project-root/ai-agent/
 ├── meta/               ← System docs (you're reading these)
-├── features/           ← Your feature work goes here
-│   ├── 001_login/      ← Each feature has its own folder
-│   ├── 002_dashboard/
-│   └── 003_reports/
+├── work/               ← Your work goes here (features, maintenance, bugs)
+│   ├── 001-feat-login/       ← Feature work
+│   ├── 002-maint-deps/       ← Maintenance work
+│   └── 003-bug-auth-fix/     ← Bug fix work
 └── knowledge/          ← Project knowledge base
     ├── SYSTEM-OVERVIEW.md
+    ├── COMMANDS.md           ← Project-specific commands
     └── subsystems/
 ```
 
-## The 5-Document System (Per Feature)
+## Work Types
 
-Each feature gets its own numbered folder with **5 core documents**:
+| Type | Prefix | Use For |
+|------|--------|---------|
+| Feature | `feat` | New functionality, enhancements |
+| Maintenance | `maint` | Dependency updates, refactoring, security audits |
+| Bug | `bug` | Bug fixes |
 
+## The Document System
+
+Each work item gets its own numbered folder. The core documents vary by type:
+
+**Features (`feat`)** - Full documentation:
 ```
-ai-agent/features/001_feature-name/
-├── 00-FEATURE-OVERVIEW.md     ← Single source of truth (SSOT)
+ai-agent/work/001-feat-user-auth/
+├── 00-OVERVIEW.md             ← Single source of truth (SSOT)
 ├── 01-REQUIREMENTS.md         ← What we're building
 ├── 02-IMPLEMENTATION-PLAN.md  ← How we're building it
 ├── 03-PROGRESS-LOG.md         ← What we did (append-only)
+├── 04-TESTING-CHECKLIST.md    ← Test scenarios
+├── 05-ANALYSIS.md             ← Optional: feature research
+└── 06-PR-MESSAGE.md           ← Optional: PR draft
+```
+
+**Maintenance (`maint`)** - Lighter documentation:
+```
+ai-agent/work/002-maint-deps-update/
+├── 00-OVERVIEW.md             ← SSOT
+├── 01-SCOPE.md                ← What's included, compatibility
+├── 02-IMPLEMENTATION-PLAN.md  ← Implementation phases
+├── 03-PROGRESS-LOG.md         ← Session log
 └── 04-TESTING-CHECKLIST.md    ← Test scenarios
 ```
 
-**Rule**: Everything about a feature is in these 5 files. No more, no less.
+**Bugs (`bug`)** - Use feature templates with focus on reproduction and fix.
 
 ---
 
@@ -77,6 +102,7 @@ ai-agent/knowledge/
 ├── SYSTEM-OVERVIEW.md      ← Project basics (you fill this or QnA with AI)
 ├── REPOSITORY-MAP.md       ← AI-generated: directory structure
 ├── CONCEPTS-INDEX.md       ← AI-generated: patterns, APIs, models
+├── COMMANDS.md             ← Project-specific commands and gotchas
 └── subsystems/
     └── [name].md          ← AI-maintained: deep dives into subsystems
 ```
@@ -164,20 +190,26 @@ AI: Scanning repository structure...
 
 ---
 
-### `>>start <feature-name>`
+### `>>start [TYPE] <name>`
 
-**What it does**: Initializes a new feature
+**What it does**: Initializes new work (feature, maintenance, or bug)
 **AI response**: Creates foundation documents, asks questions
+
+**Syntax**:
+- `>>start feat user-notifications` - New feature
+- `>>start maint deps-update` - Maintenance work
+- `>>start bug login-issue` - Bug fix
+- `>>start my-feature` - Defaults to `feat` if type omitted
 
 **Example**:
 ```
-Human: >>start user-notifications
-AI: I'll create the foundation for user-notifications.
+Human: >>start feat user-notifications
+AI: I'll create the foundation for feat: user-notifications.
 
-    Created feature folder: ai-agent/features/001_user-notifications/
+    Created work folder: ai-agent/work/001-feat-user-notifications/
 
     Created:
-    - 00-FEATURE-OVERVIEW.md (draft)
+    - 00-OVERVIEW.md (draft)
     - 01-REQUIREMENTS.md (draft)
 
     Questions about requirements:
@@ -192,13 +224,13 @@ AI: I'll create the foundation for user-notifications.
 
 ### `>>continue`
 
-**What it does**: Resumes work on current feature
+**What it does**: Resumes work on current work item
 **AI response**: Reads state, confirms next task
 
 **Example**:
 ```
 Human: >>continue
-AI: Feature: User Notifications
+AI: Work: User Notifications (feat)
     Status: Phase 2 - Backend API (in progress)
     Last: Database models created
     Next: Implement NotificationService.send()
@@ -213,7 +245,7 @@ AI: Feature: User Notifications
 ### `>>wrap`
 
 **What it does**: Ends current session with proper handoff
-**AI response**: Updates docs, logs progress, sets next task
+**AI response**: Updates docs, captures knowledge, logs progress, sets next task
 
 **Example**:
 ```
@@ -222,6 +254,7 @@ AI: Session summary:
     ✓ Completed: NotificationService.send()
     ✓ Completed: Email template rendering
     ✓ Tests: All passing
+    ✓ Knowledge: Updated CONCEPTS-INDEX.md with notification patterns
 
     Updated: 03-PROGRESS-LOG.md with handoff
 
@@ -229,6 +262,33 @@ AI: Session summary:
 ```
 
 **Next**: Session ends, context preserved for next time
+
+---
+
+### `>>checkpoint`
+
+**What it does**: Captures knowledge mid-session (use in long sessions)
+**AI response**: Updates knowledge docs, preserves context
+
+**When to use**:
+- Long sessions approaching context limits
+- You've made significant discoveries worth documenting
+- Before expected context compression
+
+**Example**:
+```
+Human: >>checkpoint
+AI: Knowledge checkpoint captured.
+
+    Updated:
+    - CONCEPTS-INDEX.md: Added authentication flow pattern
+    - COMMANDS.md: Added database migration commands
+
+    Current context preserved for continuation.
+    Ready to proceed.
+```
+
+**Note**: This does NOT end the session - work continues after checkpoint.
 
 ---
 
@@ -342,12 +402,23 @@ AI: Verifying completion...
 ### Continuing After Break
 
 1. **You say**: `>>continue`
-2. **AI reads**: SSOT + progress log
+2. **AI reads**: Knowledge base + SSOT + progress log
 3. **AI summarizes**: Current state + next task
 4. **You confirm**: "Yes" or adjust priority
 5. **AI continues**: Work resumes
 
 **No context loss**: AI knows exactly where you left off
+
+### After Context Compression (Long Sessions)
+
+When a session is very long and context gets summarized:
+
+1. **AI automatically**: Re-reads knowledge files and work SSOT
+2. **AI asks**: "Should I update knowledge with insights from the previous session?"
+3. **You answer**: Yes/No, or provide guidance
+4. **AI continues**: With recovered context
+
+**Tip**: Use `>>checkpoint` proactively in long sessions to capture knowledge before compression happens.
 
 ### Ending a Session
 
@@ -403,19 +474,24 @@ AI: Verifying completion...
 
 ## Document Guidelines
 
-### For Each Core Document
+### Core Documents
 
-**00-FEATURE-OVERVIEW.md** (max 2 pages)
-- Quick scan of entire feature
+**00-OVERVIEW.md** (max 2 pages)
+- Quick scan of entire work item
 - Current status
 - Key decisions
 - Links to other docs
 
-**01-REQUIREMENTS.md** (max 3 pages)
+**01-REQUIREMENTS.md** (max 3 pages) - for features/bugs
 - What needs to be built
 - Acceptance criteria (checkboxes)
 - Edge cases
 - Out of scope (explicit)
+
+**01-SCOPE.md** (max 2 pages) - for maintenance
+- What's included
+- Compatibility concerns
+- Success criteria
 
 **02-IMPLEMENTATION-PLAN.md** (max 4 pages)
 - Phases (numbered)
@@ -426,6 +502,7 @@ AI: Verifying completion...
 - Date + session number
 - What was completed
 - Issues found/resolved
+- Knowledge updated
 - Next session start point
 
 **04-TESTING-CHECKLIST.md** (max 2 pages)
@@ -434,14 +511,28 @@ AI: Verifying completion...
 - Expected result
 - Status: Not Tested | Pass | Fail
 
+### Optional Documents (Features)
+
+**05-ANALYSIS.md** (max 3 pages)
+- Feature-specific research
+- Codebase exploration findings
+- Technical decisions
+- Use when: Feature requires significant investigation
+
+**06-PR-MESSAGE.md** (max 1 page)
+- PR title and summary
+- Changes list
+- Testing notes
+- Use when: Work spans multiple sessions, helps maintain PR context
+
 **If exceeds max**: Refactor or archive
 
 ---
 
 ## Troubleshooting
 
-### "Too many files in /ai-agent/features/"
-→ Use `>>archive` to clean up
+### "Too many files in /ai-agent/work/"
+→ Use `>>archive` to clean up completed work
 
 ### "Don't know what to work on next"
 → Use `>>status` or check progress log "Next Session Start Here"
@@ -452,8 +543,11 @@ AI: Verifying completion...
 ### "Tests keep failing"
 → Use `>>bug` for each failure, be specific with reproduction steps
 
-### "Feature seems stuck"
-→ Check 00-FEATURE-OVERVIEW.md for blockers, discuss with AI
+### "Work seems stuck"
+→ Check 00-OVERVIEW.md for blockers, discuss with AI
+
+### "Long session, worried about losing context"
+→ Use `>>checkpoint` to capture knowledge before context compression
 
 ---
 
@@ -542,13 +636,14 @@ You can create your own shortcuts:
 
 ## Success Metrics
 
-Your feature is well-managed if:
+Your work is well-managed if:
 
 - ✅ `>>continue` gets you working in < 2 minutes
 - ✅ All docs fit on screen (respect max lengths)
 - ✅ Status is always current in SSOT
 - ✅ Progress log shows clear progression
-- ✅ Only 5 core docs + archive in feature folder
+- ✅ Knowledge gets updated when valuable insights discovered
+- ✅ Long sessions use `>>checkpoint` to preserve context
 
 ---
 

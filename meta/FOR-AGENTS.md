@@ -35,37 +35,74 @@ project-root/ai-agent/
 │   ├── README.md
 │   └── templates/
 │       ├── features/              ← Feature templates
+│       ├── maintenance/           ← Maintenance templates
 │       └── knowledge/             ← Knowledge templates
-├── features/                       ← Active feature work
-│   ├── 001_feature-name/
-│   │   ├── 00-FEATURE-OVERVIEW.md
+├── work/                           ← Active work (features, maintenance, bugs)
+│   ├── 001-feat-user-auth/        ← Feature work
+│   │   ├── 00-OVERVIEW.md
 │   │   ├── 01-REQUIREMENTS.md
 │   │   ├── 02-IMPLEMENTATION-PLAN.md
 │   │   ├── 03-PROGRESS-LOG.md
-│   │   └── 04-TESTING-CHECKLIST.md
-│   └── 002_another-feature/
-│       └── [same 5 documents]
+│   │   ├── 04-TESTING-CHECKLIST.md
+│   │   ├── 05-ANALYSIS.md         ← Optional: feature-specific research
+│   │   └── 06-PR-MESSAGE.md       ← Optional: PR draft
+│   ├── 002-maint-deps-update/     ← Maintenance work
+│   │   └── [maintenance documents]
+│   └── 003-bug-login-fix/         ← Bug fix work
+│       └── [feature documents]
 └── knowledge/                      ← Project knowledge base
     ├── SYSTEM-OVERVIEW.md
     ├── REPOSITORY-MAP.md
     ├── CONCEPTS-INDEX.md
+    ├── COMMANDS.md                ← Project-specific commands
     └── subsystems/
         └── [subsystem].md
 ```
 
-## The 5 Core Documents (Per Feature)
+## Work Types
 
-Each feature has its own folder in `ai-agent/features/NNN_feature-name/`:
+The system supports three work types, each with its own folder prefix:
 
+| Type | Prefix | Use For | Templates |
+|------|--------|---------|-----------|
+| Feature | `feat` | New functionality, enhancements | `templates/features/` |
+| Maintenance | `maint` | Dependency updates, refactoring, security audits, build changes | `templates/maintenance/` |
+| Bug | `bug` | Bug fixes | `templates/features/` (lighter usage) |
+
+**Folder naming**: `NNN-TYPE-name` (e.g., `001-feat-user-auth`, `002-maint-deps-update`, `003-bug-login-fix`)
+
+## Core Documents
+
+Each work item has its own folder in `ai-agent/work/NNN-TYPE-name/`:
+
+### Required Documents (All Work Types)
 ```
-00-FEATURE-OVERVIEW.md     ← SSOT - read this FIRST every session
-01-REQUIREMENTS.md         ← What to build (max 3 pages)
+00-OVERVIEW.md             ← SSOT - read this FIRST every session
 02-IMPLEMENTATION-PLAN.md  ← How to build (max 4 pages, phase-based)
 03-PROGRESS-LOG.md         ← Session log (append-only, unlimited)
 04-TESTING-CHECKLIST.md    ← Test scenarios (max 2 pages)
 ```
 
-**Never create other status/summary documents**. If info doesn't fit in these 5, it goes in `03-PROGRESS-LOG.md`.
+### Additional Documents by Work Type
+
+**Features (`feat`)** - Full documentation:
+```
+01-REQUIREMENTS.md         ← What to build (max 3 pages)
+05-ANALYSIS.md             ← Optional: feature-specific research
+06-PR-MESSAGE.md           ← Optional: PR draft (maintained throughout)
+```
+
+**Maintenance (`maint`)** - Lighter documentation:
+```
+01-SCOPE.md                ← What's included, compatibility concerns (max 2 pages)
+```
+
+**Bugs (`bug`)** - Use feature templates, focus on:
+```
+01-REQUIREMENTS.md         ← Bug description, reproduction, expected behavior
+```
+
+**Never create other status/summary documents**. If info doesn't fit in these docs, it goes in `03-PROGRESS-LOG.md`.
 
 ---
 
@@ -73,54 +110,83 @@ Each feature has its own folder in `ai-agent/features/NNN_feature-name/`:
 
 When human uses meta-instructions (shortcuts starting with `>>`), follow these protocols:
 
-### `>>start <feature-name>`
+### `>>start [TYPE] <name>`
 
-**Intent**: Initialize new feature
+**Intent**: Initialize new work item (feature, maintenance, or bug)
+
+**Syntax**:
+- `>>start feat user-auth` - New feature
+- `>>start maint deps-update` - Maintenance work
+- `>>start bug login-issue` - Bug fix
+- `>>start my-feature` - Defaults to `feat` if type omitted
 
 **Protocol**:
+
 1. **Check knowledge base** (CRITICAL - Do this first):
    - Read `ai-agent/knowledge/SYSTEM-OVERVIEW.md` if it exists
    - Check `ai-agent/knowledge/CONCEPTS-INDEX.md` for relevant patterns
+   - Check `ai-agent/knowledge/COMMANDS.md` for project commands
    - Look for related subsystem notes in `knowledge/subsystems/`
    - Use this context to ask better questions and understand requirements
 
-2. **Ensure features directory exists**:
-   - If `ai-agent/features/` doesn't exist, create it: `mkdir -p ai-agent/features`
+2. **Ensure work directory exists**:
+   - If `ai-agent/work/` doesn't exist, create it: `mkdir -p ai-agent/work`
 
-3. **Determine feature number**:
-   - Check `ai-agent/features/` for existing feature folders
-   - Find highest number (e.g., 003)
-   - Next number is highest + 1 (e.g., 004)
-   - If no features exist, start with 001
+3. **Determine work item number** (CRITICAL - follow exactly):
+   - List all folders in `ai-agent/work/`
+   - Extract the numeric prefix from each folder (e.g., `001` from `001-feat-auth`)
+   - Find the HIGHEST number across ALL folders regardless of type
+   - Next number = highest + 1
+   - If no folders exist, start with 001
+   - **Example**: If folders are `001-feat-auth`, `002-maint-deps`, `003-bug-fix`, next is `004`
 
-4. **Create feature folder**: `ai-agent/features/NNN_feature-name/`
+4. **Create work folder**: `ai-agent/work/NNN-TYPE-name/`
    - Use 3-digit number (001, 002, etc.)
-   - Use kebab-case for feature name
-   - Example: `ai-agent/features/004_user-authentication/`
+   - Use work type prefix (feat, maint, bug)
+   - Use kebab-case for name
+   - Example: `ai-agent/work/004-feat-user-notifications/`
 
-5. **Copy and customize templates** from `meta/templates/features/`:
-   - `00-FEATURE-OVERVIEW.md`:
-     - Set feature name
-     - Set status: "Planning"
-     - Set started date
-   - `01-REQUIREMENTS.md`:
-     - Add obvious requirements from human's description
-     - Add 3-5 clarifying questions (informed by knowledge base)
+5. **Copy and customize templates** based on work type:
 
-6. **Present questions** to human (questions should reference project context from knowledge)
-7. **Wait for answers** (don't proceed to implementation yet)
+   **For `feat` (features)**:
+   - Copy from `meta/templates/features/`
+   - `00-OVERVIEW.md`: Set name, status "Planning", date
+   - `01-REQUIREMENTS.md`: Add obvious requirements, 3-5 questions
+
+   **For `maint` (maintenance)**:
+   - Copy from `meta/templates/maintenance/`
+   - `00-OVERVIEW.md`: Set name, status "Planning", date
+   - `01-SCOPE.md`: Define scope, compatibility concerns
+
+   **For `bug` (bugs)**:
+   - Copy from `meta/templates/features/`
+   - `00-OVERVIEW.md`: Set name, status "Investigating", date
+   - `01-REQUIREMENTS.md`: Bug description, reproduction steps, expected behavior
+
+6. **Research and document** (NEW - knowledge capture):
+   - If you research the codebase during planning, document findings
+   - Update `knowledge/CONCEPTS-INDEX.md` with discovered patterns
+   - Create/update subsystem docs if you learn significant details
+   - Note in progress log: "Knowledge updated: [what was added]"
+
+7. **Present questions** to human (informed by knowledge base research)
+8. **Wait for answers** (don't proceed to implementation yet)
 
 **Response template**:
 ```
-I'll create the foundation for [feature-name].
+I'll create the foundation for [TYPE]: [name].
 
-Created feature folder: ai-agent/features/NNN_feature-name/
+Created work folder: ai-agent/work/NNN-TYPE-name/
 
 Created:
-- 00-FEATURE-OVERVIEW.md (draft)
-- 01-REQUIREMENTS.md (draft)
+- 00-OVERVIEW.md (draft)
+- 01-REQUIREMENTS.md / 01-SCOPE.md (draft)
 
-Questions about requirements:
+[If knowledge was updated:]
+Updated knowledge:
+- CONCEPTS-INDEX.md: Added [pattern/concept]
+
+Questions about [requirements/scope]:
 1. [Question 1]
 2. [Question 2]
 3. [Question 3]
@@ -128,32 +194,39 @@ Questions about requirements:
 Please answer these so I can create an implementation plan.
 ```
 
-**Next steps**: After human answers → Create `02-IMPLEMENTATION-PLAN.md` in feature folder → Wait for approval
+**Next steps**: After human answers → Create `02-IMPLEMENTATION-PLAN.md` → Wait for approval
 
 ---
 
 ### `>>continue`
 
-**Intent**: Resume work on existing feature
+**Intent**: Resume work on existing work item
 
 **Protocol**:
 1. **Check knowledge base** (Do this first):
    - Review `ai-agent/knowledge/SYSTEM-OVERVIEW.md` for project context
+   - Check `ai-agent/knowledge/COMMANDS.md` for project commands
    - Check for relevant subsystem notes in `knowledge/subsystems/`
    - This helps you understand the codebase before diving in
 
-2. **Read feature SSOT**: `00-FEATURE-OVERVIEW.md`
-   - Extract: feature name, current status, current phase
+2. **Find active work item**:
+   - List folders in `ai-agent/work/`
+   - If multiple exist, check which has status "In Progress" in `00-OVERVIEW.md`
+   - If unclear, ask human which work item to continue
 
-3. **Read last entry** in `03-PROGRESS-LOG.md`
+3. **Read work SSOT**: `00-OVERVIEW.md`
+   - Extract: work name, type, current status, current phase
+
+4. **Read last entry** in `03-PROGRESS-LOG.md`
    - Extract: last completed item, next task
-3. Summarize understanding (max 4 sentences)
-4. State specific next task
-5. Ask for confirmation
+
+5. Summarize understanding (max 4 sentences)
+6. State specific next task
+7. Ask for confirmation
 
 **Response template**:
 ```
-Feature: [Name from SSOT]
+Work: [Name from SSOT] (TYPE)
 Status: [Status from SSOT]
 Current Phase: [Phase X - Name]
 
@@ -178,7 +251,14 @@ Ready to proceed with [next task]?
 **Protocol**:
 1. Update `02-IMPLEMENTATION-PLAN.md`:
    - Mark any completed phases with `[x]` (CRITICAL: Always update checkboxes)
-2. Append to `03-PROGRESS-LOG.md`:
+
+2. **Knowledge checkpoint** (CRITICAL - do this before logging):
+   - Did you discover patterns worth documenting? → Update `CONCEPTS-INDEX.md`
+   - Were there gotchas future agents should know? → Update relevant subsystem doc
+   - Did you learn useful commands? → Update `COMMANDS.md`
+   - Any significant codebase insights? → Create/update subsystem doc
+
+3. Append to `03-PROGRESS-LOG.md`:
    ```markdown
    ## [YYYY-MM-DD] Session N
 
@@ -192,6 +272,9 @@ Ready to proceed with [next task]?
    **Issues Encountered & Resolved**:
    - Issue: [desc] → Solution: [desc] → Location: file.ts:line
 
+   **Knowledge Updated**:
+   - [List any knowledge docs updated, or "None"]
+
    **Next Session Start Here**:
    Priority 1: [Most important next task]
    Priority 2: [Second task]
@@ -201,18 +284,22 @@ Ready to proceed with [next task]?
 
    Quick start: ">>continue"
    ```
-3. Update `00-FEATURE-OVERVIEW.md` if major milestone reached
-4. Summarize session to human
+
+4. Update `00-OVERVIEW.md` if major milestone reached
+5. Update `06-PR-MESSAGE.md` if it exists (keep PR draft current)
+6. Summarize session to human
 
 **Response template**:
 ```
 Session summary:
 ✓ Completed: [List]
 ✓ Tests: [Status]
+✓ Knowledge: [Updated X / No updates needed]
 
 Updated:
 - 03-PROGRESS-LOG.md (with handoff)
 - 02-IMPLEMENTATION-PLAN.md (marked Phase X complete)
+- [Any knowledge docs updated]
 
 Next session: [Specific next task]
 ```
@@ -224,13 +311,13 @@ Next session: [Specific next task]
 **Intent**: Quick status check without making changes
 
 **Protocol**:
-1. Read `00-FEATURE-OVERVIEW.md`
+1. Read `00-OVERVIEW.md`
 2. Read `02-IMPLEMENTATION-PLAN.md` (count completed vs total phases)
 3. Present status summary (don't modify anything)
 
 **Response template**:
 ```
-Feature: [Name]
+Work: [Name] (TYPE)
 Overall: [X]% complete ([Y] of [Z] phases done)
 Current Phase: [Phase X - Name]
 Last update: [Date from progress log]
@@ -331,39 +418,91 @@ I'll investigate [likely file/area] after your answers.
 
 ### `>>archive`
 
-**Intent**: Feature complete, archive old documents
+**Intent**: Work complete, archive old documents
 
 **Protocol**:
 1. Verify completion:
-   - Check `01-REQUIREMENTS.md` - all checkboxes `[x]`?
+   - Check `01-REQUIREMENTS.md` or `01-SCOPE.md` - all checkboxes `[x]`?
    - Check `04-TESTING-CHECKLIST.md` - all tests Pass?
    - Check `02-IMPLEMENTATION-PLAN.md` - all phases `[x]`?
 2. If not complete:
    ```
-   Cannot archive - feature not complete:
+   Cannot archive - work not complete:
    ❌ [List incomplete items]
 
-   Complete these first, then use /archive
+   Complete these first, then use >>archive
    ```
 3. If complete:
-   - Create `archive/YYYY-MM-DD-[feature-name]-FINAL.md`
+   - Create `archive/YYYY-MM-DD-[name]-FINAL.md`
    - Move old session summaries to archive/
-   - Keep 5 core docs in root (for reference)
-4. Update `00-FEATURE-OVERVIEW.md` status to "Complete"
+   - Keep core docs in folder (for reference)
+4. Update `00-OVERVIEW.md` status to "Complete"
 
 **Response template**:
 ```
 Verifying completion...
-✓ All requirements met
+✓ All requirements/scope met
 ✓ All tests passing
 ✓ All phases complete
 
-Created: archive/2025-MM-DD-[feature]-FINAL.md
+Created: archive/2025-MM-DD-[name]-FINAL.md
 Moved to archive: [list]
-Kept in root: 5 core documents
+Kept in folder: core documents
 
-Feature complete! 🎉
+Work complete! 🎉
 ```
+
+---
+
+### `>>checkpoint`
+
+**Intent**: Capture knowledge before context compression (use proactively at ~70-80% context)
+
+**When to use**:
+- Long sessions approaching context limits
+- Before expected context compression/summarization
+- When you've accumulated significant insights not yet documented
+- Human explicitly requests knowledge capture
+
+**Protocol**:
+1. **Review session activity**:
+   - What patterns have you discovered?
+   - What gotchas or issues were encountered?
+   - What commands or workflows were useful?
+   - What subsystem knowledge was gained?
+
+2. **Update knowledge docs**:
+   - `CONCEPTS-INDEX.md`: New patterns, APIs, models discovered
+   - `COMMANDS.md`: Useful commands learned
+   - `subsystems/[name].md`: Deep subsystem insights
+   - `SYSTEM-OVERVIEW.md`: High-level architecture insights (rare)
+
+3. **Update progress log**:
+   ```markdown
+   ### 📸 Knowledge Checkpoint
+
+   **Captured**:
+   - [What was documented]
+   - [Where it was added]
+
+   **Context for continuation**:
+   - Current task: [What you're working on]
+   - Key files: [Files currently relevant]
+   - Pending decisions: [Any open questions]
+   ```
+
+4. **Summarize to human**:
+   ```
+   Knowledge checkpoint captured.
+
+   Updated:
+   - [List of knowledge docs updated]
+
+   Current context preserved for continuation.
+   Ready to proceed.
+   ```
+
+**Note**: This does NOT end the session. Continue working after checkpoint.
 
 ---
 
@@ -373,26 +512,50 @@ Feature complete! 🎉
 
 When human says `>>continue`:
 
-1. **Read SSOT**: `00-FEATURE-OVERVIEW.md`
-   - Feature name
+1. **Read knowledge base**:
+   - `ai-agent/knowledge/SYSTEM-OVERVIEW.md` for project context
+   - `ai-agent/knowledge/COMMANDS.md` for useful commands
+2. **Read SSOT**: `00-OVERVIEW.md`
+   - Work name and type
    - Overall status
    - Current phase
-2. **Read Progress Log**: Last entry in `03-PROGRESS-LOG.md`
+3. **Read Progress Log**: Last entry in `03-PROGRESS-LOG.md`
    - What was last completed
    - What's next
-3. **Summarize**: 3-4 sentences max
-4. **Confirm**: State next task specifically
-5. **Wait**: For human approval
+4. **Summarize**: 3-4 sentences max
+5. **Confirm**: State next task specifically
+6. **Wait**: For human approval
 
 **Template**:
 ```
-Feature: [Name]
+Work: [Name] (TYPE)
 Status: [From SSOT]
 Phase: [Current phase name]
 Last: [Last completed item]
 Next: [Specific task with file:line if applicable]
 
 Ready to proceed?
+```
+
+### Continuing After Context Summary/Compression
+
+When a session continues from a summarized context (e.g., after context window reset):
+
+**Context Continuation Checklist** (CRITICAL - follow every time):
+1. **Check git status** - Are there uncommitted changes?
+2. **Re-read knowledge files**:
+   - `ai-agent/knowledge/SYSTEM-OVERVIEW.md`
+   - `ai-agent/knowledge/COMMANDS.md`
+   - Relevant `subsystems/` docs mentioned in summary
+3. **Re-read work SSOT**: `00-OVERVIEW.md`
+4. **Read last progress log entry**: Check "Next Session Start Here"
+5. **Verify "in progress" work**: Is there incomplete work mentioned?
+6. **Ask if unclear**: "The summary mentions X - is this still the current state?"
+
+**Proactive question**: After recovering context, ask:
+```
+I've recovered context from the summary. Should I update knowledge
+with any insights from the previous session before continuing?
 ```
 
 ### During Work
@@ -441,11 +604,28 @@ When human says `>>wrap`:
 
 | Document | Max Length | Action if Exceeded |
 |----------|-----------|-------------------|
-| 00-FEATURE-OVERVIEW.md | 2 pages | Refactor, archive old decisions |
+| 00-OVERVIEW.md | 2 pages | Refactor, archive old decisions |
 | 01-REQUIREMENTS.md | 3 pages | Split feature or remove detail |
+| 01-SCOPE.md | 2 pages | Be more concise |
 | 02-IMPLEMENTATION-PLAN.md | 4 pages | Break phases into sub-features |
 | 03-PROGRESS-LOG.md | Unlimited | Archive old entries (keep recent) |
 | 04-TESTING-CHECKLIST.md | 2 pages | Remove duplicate scenarios |
+| 05-ANALYSIS.md | 3 pages | Move reusable insights to knowledge |
+| 06-PR-MESSAGE.md | 1 page | Keep summary concise |
+
+### Extended Documents (05, 06)
+
+**05-ANALYSIS.md** - Use when:
+- Feature requires significant codebase research
+- Analysis is specific to this work item (not reusable)
+- You need to document investigation findings
+- **Don't use for**: Insights that should go in knowledge docs
+
+**06-PR-MESSAGE.md** - Use when:
+- Work will result in a PR
+- Work spans multiple sessions
+- Maintaining PR context throughout is valuable
+- **Update**: Throughout development, especially at `>>wrap`
 
 ### Append-Only Rule
 
@@ -457,7 +637,7 @@ When human says `>>wrap`:
 
 ### SSOT Updates
 
-`00-FEATURE-OVERVIEW.md` should be updated only when:
+`00-OVERVIEW.md` should be updated only when:
 - Phase changes
 - Status changes (Planning → Implementation → Testing → Complete)
 - Major decision changes
@@ -871,17 +1051,28 @@ Templates are organized by type in `meta/templates/`:
 
 ### Feature Templates
 `meta/templates/features/`:
-- `00-FEATURE-OVERVIEW.md`
-- `01-REQUIREMENTS.md`
-- `02-IMPLEMENTATION-PLAN.md`
-- `03-PROGRESS-LOG.md`
-- `04-TESTING-CHECKLIST.md`
+- `00-OVERVIEW.md` - SSOT for features and bugs
+- `01-REQUIREMENTS.md` - Requirements for features
+- `02-IMPLEMENTATION-PLAN.md` - Implementation phases
+- `03-PROGRESS-LOG.md` - Session log
+- `04-TESTING-CHECKLIST.md` - Test scenarios
+- `05-ANALYSIS.md` - Optional: feature-specific research
+- `06-PR-MESSAGE.md` - Optional: PR draft
+
+### Maintenance Templates
+`meta/templates/maintenance/`:
+- `00-OVERVIEW.md` - SSOT for maintenance work
+- `01-SCOPE.md` - Scope and compatibility concerns
+- `02-IMPLEMENTATION-PLAN.md` - Implementation phases
+- `03-PROGRESS-LOG.md` - Session log
+- `04-TESTING-CHECKLIST.md` - Test scenarios
 
 ### Knowledge Templates
 `meta/templates/knowledge/`:
 - `SYSTEM-OVERVIEW.md` - High-level project information
 - `REPOSITORY-MAP.md` - Auto-generated repository structure
 - `CONCEPTS-INDEX.md` - Catalog of patterns and concepts
+- `COMMANDS.md` - Project-specific commands
 - `subsystems/TEMPLATE.md` - Template for subsystem documentation
 
 When creating new documents, copy appropriate template and fill in content.
@@ -905,14 +1096,15 @@ When creating new documents, copy appropriate template and fill in content.
 
 You're following the protocol correctly if:
 
-✅ Every session starts by reading SSOT from the feature folder
-✅ Features are in numbered folders (001_, 002_, etc.)
+✅ Every session starts by reading SSOT from the work folder
+✅ Work items are in numbered folders (001-TYPE-name)
 ✅ Progress log grows by appending (never recreating)
 ✅ Handoffs include specific next task with file path
 ✅ Documents stay within max length
 ✅ Human can resume work in < 2 minutes
-✅ Only 5 core docs per feature (plus archive)
+✅ Core docs per work item (plus optional 05/06)
 ✅ Knowledge docs updated when valuable insights discovered
+✅ Knowledge checkpoint done at >>wrap
 ✅ No duplicate summaries
 
 ---
@@ -922,18 +1114,21 @@ You're following the protocol correctly if:
 | Human Says | You Do |
 |-----------|--------|
 | `>>init-knowledge` | Setup knowledge base: read existing overview, QnA for gaps, merge info |
-| `>>scan-repo` | Scan codebase, generate REPOSITORY-MAP and CONCEPTS-INDEX |
-| `>>start X` | Check knowledge base, create numbered feature folder, ask questions |
-| `>>continue` | Check knowledge base, read SSOT from feature folder, confirm next task |
-| `>>wrap` | Update plan + log, consider knowledge updates, summarize session |
+| `>>scan-repo` | Scan codebase, generate REPOSITORY-MAP, CONCEPTS-INDEX, COMMANDS |
+| `>>start [TYPE] X` | Check knowledge, create numbered work folder (NNN-TYPE-name), ask questions |
+| `>>continue` | Check knowledge, read SSOT from work folder, confirm next task |
+| `>>wrap` | Knowledge checkpoint, update plan + log, summarize session |
+| `>>checkpoint` | Capture knowledge mid-session (use at ~70-80% context) |
 | `>>status` | Show current progress (no changes) |
 | `>>test` | Create test checklist |
 | `>>bug X` | Log bug, check knowledge, investigate, update knowledge if needed |
 | `>>archive` | Verify complete, create final summary |
 
-**Always**: Check knowledge base first, read SSOT, be specific, confirm major changes, respect limits, update checkboxes, document valuable insights.
+**Work Types**: `feat` (feature), `maint` (maintenance), `bug` (bug fix)
 
-**Never**: Skip knowledge lookup, create new summaries, duplicate info, exceed max lengths, skip handoffs, forget to number features, ignore discovered patterns.
+**Always**: Check knowledge base first, read SSOT, be specific, confirm major changes, respect limits, update checkboxes, document valuable insights, do knowledge checkpoint at wrap.
+
+**Never**: Skip knowledge lookup, create new summaries, duplicate info, exceed max lengths, skip handoffs, use wrong folder numbering, ignore discovered patterns.
 
 ---
 

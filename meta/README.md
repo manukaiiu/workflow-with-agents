@@ -1,6 +1,6 @@
 # Meta Documentation System
 
-**Purpose**: Streamlined system for managing feature development and project knowledge with AI assistance.
+**Purpose**: Streamlined system for managing development work (features, maintenance, bugs) and project knowledge with AI assistance.
 
 ## What's Here
 
@@ -10,9 +10,17 @@ meta/
 ├── FOR-HUMANS.md          ← Human guide + meta-instructions
 ├── FOR-AGENTS.md          ← Agent protocol + workflows
 └── templates/
-    ├── features/          ← Feature development templates
-    │   ├── 00-FEATURE-OVERVIEW.md
+    ├── features/          ← Feature/bug templates
+    │   ├── 00-OVERVIEW.md
     │   ├── 01-REQUIREMENTS.md
+    │   ├── 02-IMPLEMENTATION-PLAN.md
+    │   ├── 03-PROGRESS-LOG.md
+    │   ├── 04-TESTING-CHECKLIST.md
+    │   ├── 05-ANALYSIS.md         ← Optional
+    │   └── 06-PR-MESSAGE.md       ← Optional
+    ├── maintenance/       ← Maintenance templates
+    │   ├── 00-OVERVIEW.md
+    │   ├── 01-SCOPE.md
     │   ├── 02-IMPLEMENTATION-PLAN.md
     │   ├── 03-PROGRESS-LOG.md
     │   └── 04-TESTING-CHECKLIST.md
@@ -20,6 +28,7 @@ meta/
         ├── SYSTEM-OVERVIEW.md
         ├── REPOSITORY-MAP.md
         ├── CONCEPTS-INDEX.md
+        ├── COMMANDS.md
         └── subsystems/TEMPLATE.md
 ```
 
@@ -28,9 +37,10 @@ meta/
 ### For Humans
 → Read `FOR-HUMANS.md` (5 minutes)
 
-**Starting new feature**: Say `>>start [feature-name]`
+**Starting new work**: Say `>>start [TYPE] name` (TYPE: feat/maint/bug)
 **Continuing work**: Say `>>continue`
 **Ending session**: Say `>>wrap`
+**Mid-session checkpoint**: Say `>>checkpoint`
 
 ### For AI Agents
 → Read `FOR-AGENTS.md` when human points you to it
@@ -46,37 +56,55 @@ When using this system, your project will be organized like this:
 project-root/
 └── ai-agent/
     ├── meta/                           ← This directory (system docs & templates)
-    ├── features/                       ← Feature work (created by agent)
-    │   ├── 001_feature-name/
-    │   │   ├── 00-FEATURE-OVERVIEW.md
+    ├── work/                           ← Active work (created by agent)
+    │   ├── 001-feat-user-auth/         ← Feature work
+    │   │   ├── 00-OVERVIEW.md
     │   │   ├── 01-REQUIREMENTS.md
     │   │   ├── 02-IMPLEMENTATION-PLAN.md
     │   │   ├── 03-PROGRESS-LOG.md
-    │   │   └── 04-TESTING-CHECKLIST.md
-    │   └── 002_another-feature/
-    │       └── [same 5 documents]
+    │   │   ├── 04-TESTING-CHECKLIST.md
+    │   │   ├── 05-ANALYSIS.md          ← Optional
+    │   │   └── 06-PR-MESSAGE.md        ← Optional
+    │   ├── 002-maint-deps-update/      ← Maintenance work
+    │   │   └── [maintenance documents]
+    │   └── 003-bug-login-fix/          ← Bug fix work
+    │       └── [feature documents]
     └── knowledge/                      ← Project knowledge (created by agent)
         ├── SYSTEM-OVERVIEW.md
         ├── REPOSITORY-MAP.md
         ├── CONCEPTS-INDEX.md
+        ├── COMMANDS.md
         └── subsystems/
             └── [subsystem].md
 ```
 
-**Note**: Only the `meta/` folder needs to be copied to your project. The agent automatically creates `features/` and `knowledge/` folders when you run `>>start` or `>>init-knowledge`.
+**Note**: Only the `meta/` folder needs to be copied to your project. The agent automatically creates `work/` and `knowledge/` folders when you run `>>start` or `>>init-knowledge`.
 
 ## Core Concepts
 
-### Multiple Features
-Each feature gets its own numbered folder (001_, 002_, etc.) containing **5 core documents**:
+### Work Types
+The system supports three work types:
 
-```
-00-FEATURE-OVERVIEW.md     ← SSOT (Single Source of Truth)
-01-REQUIREMENTS.md         ← What to build
-02-IMPLEMENTATION-PLAN.md  ← How to build it
-03-PROGRESS-LOG.md         ← Session log (append-only)
-04-TESTING-CHECKLIST.md    ← Test scenarios
-```
+| Type | Prefix | Use For |
+|------|--------|---------|
+| Feature | `feat` | New functionality, enhancements |
+| Maintenance | `maint` | Dependency updates, refactoring, security audits |
+| Bug | `bug` | Bug fixes |
+
+Each work item gets a numbered folder: `NNN-TYPE-name` (e.g., `001-feat-user-auth`)
+
+### Core Documents
+All work types share these core documents:
+- **00-OVERVIEW.md** - SSOT (Single Source of Truth)
+- **02-IMPLEMENTATION-PLAN.md** - How to build it
+- **03-PROGRESS-LOG.md** - Session log (append-only)
+- **04-TESTING-CHECKLIST.md** - Test scenarios
+
+Type-specific documents:
+- **01-REQUIREMENTS.md** - For features/bugs
+- **01-SCOPE.md** - For maintenance
+- **05-ANALYSIS.md** - Optional feature research
+- **06-PR-MESSAGE.md** - Optional PR draft
 
 ### Knowledge System
 AI builds and maintains project knowledge to work more efficiently:
@@ -84,6 +112,7 @@ AI builds and maintains project knowledge to work more efficiently:
 - **SYSTEM-OVERVIEW.md** - High-level project info (human or AI-filled)
 - **REPOSITORY-MAP.md** - Directory structure and workflows
 - **CONCEPTS-INDEX.md** - Patterns, APIs, models discovered
+- **COMMANDS.md** - Project-specific commands and gotchas
 - **subsystems/** - Deep dives into specific subsystems
 
 ### Meta-Instructions
@@ -93,24 +122,26 @@ Shortcuts starting with `>>` that expand to full workflows:
 - `>>init-knowledge` - Setup knowledge base (human + QnA combined)
 - `>>scan-repo` - Scan codebase and generate maps
 
-**Features** (regular work):
-- `>>start feature-name` - Initialize new feature
+**Work** (regular work):
+- `>>start [TYPE] name` - Initialize new work (feat/maint/bug)
 - `>>continue` - Resume work
 - `>>wrap` - End session with handoff
+- `>>checkpoint` - Capture knowledge mid-session
 - `>>status` - Quick status check
 - `>>test` - Create test checklist
 - `>>bug description` - Report and fix bug
-- `>>archive` - Complete and archive feature
+- `>>archive` - Complete and archive work
 
 ## Philosophy
 
-1. **Multiple Features**: Each feature isolated in its own folder, numbered for clarity
-2. **Knowledge Accumulation**: Insights from one feature help with later features
+1. **Work Types**: Features, maintenance, and bugs each have appropriate documentation
+2. **Knowledge Accumulation**: Insights from one task help with later tasks
 3. **Separation of Concerns**: Humans read FOR-HUMANS, agents read FOR-AGENTS
 4. **Meta-instructions**: Simple shortcuts expand to full protocols
 5. **Templates**: Pre-filled structure, just customize content
 6. **Append-only log**: Never create duplicate summaries
-7. **Conciseness**: Prioritize clarity and brevity
+7. **Context preservation**: Knowledge checkpoints prevent loss in long sessions
+8. **Conciseness**: Prioritize clarity and brevity
 
 ## Getting Started
 
@@ -120,31 +151,31 @@ Shortcuts starting with `>>` that expand to full workflows:
 1. Optionally: Fill out `ai-agent/knowledge/SYSTEM-OVERVIEW.md` with what you know
 2. Run `>>init-knowledge` - AI reads your overview, asks questions to fill gaps
 3. Run `>>scan-repo` - AI scans codebase and creates maps
-4. Start first feature: `>>start my-first-feature`
+4. Start first work: `>>start feat my-first-feature`
 
 **Option 2 - Quick knowledge setup**:
 1. Run `>>init-knowledge` - AI asks questions, creates overview
-2. Start first feature: `>>start my-first-feature`
+2. Start first work: `>>start feat my-first-feature`
 3. Skip repo scanning for now (can run `>>scan-repo` anytime)
 
 **Option 3 - Jump right in**:
-1. Say `>>start my-first-feature`
+1. Say `>>start feat my-first-feature`
 2. AI learns about your project as it works
 3. Knowledge accumulates naturally
 4. Add formal knowledge later with `>>init-knowledge` and `>>scan-repo`
 
-### Working on Features
+### Working on Tasks
 
 **New to this system?**
 1. Read `FOR-HUMANS.md` (5 min)
-2. Say `>>start my-feature-name`
+2. Say `>>start feat my-feature-name`
 3. Answer AI's questions
 4. Approve plan
 5. AI implements
 
 **Continuing work?**
 1. Say `>>continue`
-2. AI reads state from feature folder
+2. AI reads state from work folder
 3. Confirms next task
 4. You approve
 5. Work continues
@@ -152,17 +183,27 @@ Shortcuts starting with `>>` that expand to full workflows:
 ### Ending Sessions
 
 1. Say `>>wrap`
-2. AI updates progress log
-3. AI marks completed tasks
-4. AI sets clear next steps
-5. Session ends cleanly
+2. AI performs knowledge checkpoint
+3. AI updates progress log
+4. AI marks completed tasks
+5. AI sets clear next steps
+6. Session ends cleanly
+
+### Long Sessions
+
+Use `>>checkpoint` to capture knowledge before context compression:
+1. Say `>>checkpoint`
+2. AI updates knowledge docs
+3. AI preserves current context
+4. Work continues
 
 ## Key Features
 
-✅ **Multiple features**: Work on several features simultaneously
+✅ **Work types**: Features, maintenance, and bugs with appropriate templates
 ✅ **Knowledge retention**: AI remembers project insights across sessions
-✅ **Clear organization**: Numbered folders, consistent structure
+✅ **Clear organization**: Numbered folders with type prefix
 ✅ **No context loss**: Resume work in < 2 minutes
+✅ **Knowledge checkpoints**: Preserve insights in long sessions
 ✅ **Automated updates**: AI maintains checkboxes and progress
 ✅ **Template-based**: Consistent structure every time
 
@@ -170,11 +211,11 @@ Shortcuts starting with `>>` that expand to full workflows:
 
 Your project is well-managed if:
 
-- Each feature is in its own numbered folder
+- Each work item is in its own numbered folder (NNN-TYPE-name)
 - Knowledge docs exist and are up-to-date
 - `>>continue` gets you working in < 2 minutes
 - Progress logs show clear progression
-- Only 5 core docs per feature (plus archive)
+- `>>checkpoint` used in long sessions
 - AI references knowledge docs before starting work
 
 ---

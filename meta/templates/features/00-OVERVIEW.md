@@ -1,5 +1,6 @@
 # [Feature Name]
 
+**Type**: Feature
 **Status**: Planning | Implementation | Testing | Complete
 **Started**: YYYY-MM-DD
 **Last Updated**: YYYY-MM-DD
@@ -33,6 +34,8 @@
 - Plan: [02-IMPLEMENTATION-PLAN.md](02-IMPLEMENTATION-PLAN.md)
 - Progress: [03-PROGRESS-LOG.md](03-PROGRESS-LOG.md)
 - Tests: [04-TESTING-CHECKLIST.md](04-TESTING-CHECKLIST.md)
+- Analysis: [05-ANALYSIS.md](05-ANALYSIS.md) (optional)
+- PR: [06-PR-MESSAGE.md](06-PR-MESSAGE.md) (optional)
 
 ## Quick FAQ
 1. **Q**: [Common question]?
