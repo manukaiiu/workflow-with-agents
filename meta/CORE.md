@@ -151,6 +151,21 @@ Quick status check - no file changes:
 4. **On-demand loading**: Read protocol files only when executing that command
 5. **Checkpoint often**: Capture knowledge before context loss
 6. **Confirm major changes**: Ask before refactoring or large changes
+7. **Work in work items**: Create/edit outputs in `work/` folder, promote via `>>finalize`
+
+## Output Location Rules
+
+**Where do I create/edit files?**
+
+| Situation | Location | Why |
+|-----------|----------|-----|
+| Active work on a work item | `work/NNN-TYPE-name/` | Keep work contained |
+| Deliverables from work item | `work/NNN-TYPE-name/90-OUTPUTS/` | Track with work item |
+| Finalizing concept/workplan | Use `>>finalize` protocol | Controlled promotion |
+| User asks to edit finalized output | **Ask first**: "Edit in place, or create new version?" | Protect finalized work |
+| User asks to create file outside work item | **Confirm location** with user | Avoid accidental bypass |
+
+**Key rule**: If there's an active work item, outputs belong there until finalized.
 
 ---
 
@@ -176,8 +191,8 @@ When human says these phrases, treat as the corresponding command:
 | Starting any work | [protocols/start.md](protocols/start.md) |
 | Concept workflow overview | [protocols/concept/overview.md](protocols/concept/overview.md) |
 | File naming conventions | [reference/FILE-CONVENTIONS.md](reference/FILE-CONVENTIONS.md) |
+| Where to create/edit files | [reference/OUTPUT-LOCATIONS.md](reference/OUTPUT-LOCATIONS.md) |
 | All extraction ID meanings | [reference/GLOSSARY.md](reference/GLOSSARY.md) |
-| Technical vs Process modes | [reference/MODES.md](reference/MODES.md) |
 | Work type comparison | [reference/WORK-TYPES.md](reference/WORK-TYPES.md) |
 
 ---
