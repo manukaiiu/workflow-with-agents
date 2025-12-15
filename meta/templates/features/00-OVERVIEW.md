@@ -5,11 +5,9 @@
 **Started**: YYYY-MM-DD
 **Last Updated**: YYYY-MM-DD
 
-## One-Line Description
-[What this feature does in one sentence]
-
-## Business Context
-[Why we're building this - 2-3 sentences max]
+## Quick Context
+<!-- For context recovery - read this section first after any break -->
+[2-3 sentences: What this feature does, why it matters, current focus area]
 
 ## Current Status
 **Phase**: [Phase X of Y - Phase Name]
@@ -25,24 +23,51 @@
 **Blockers**:
 - [None | List blockers]
 
-## Key Decisions
-- **Decision 1**: [Rationale]
-- **Decision 2**: [Rationale]
+## Next Actions
+1. [Specific next task with file path if applicable]
+2. [Second priority task]
 
-## Quick Links
-- Requirements: [01-REQUIREMENTS.md](01-REQUIREMENTS.md)
-- Plan: [02-IMPLEMENTATION-PLAN.md](02-IMPLEMENTATION-PLAN.md)
-- Progress: [03-PROGRESS-LOG.md](03-PROGRESS-LOG.md)
-- Tests: [04-TESTING-CHECKLIST.md](04-TESTING-CHECKLIST.md)
-- Analysis: [05-ANALYSIS.md](05-ANALYSIS.md) (optional)
-- PR: [06-PR-MESSAGE.md](06-PR-MESSAGE.md) (optional)
+## Key Decisions
+| Decision | Rationale | Date |
+|----------|-----------|------|
+| [Decision 1] | [Why this choice] | YYYY-MM-DD |
+| [Decision 2] | [Why this choice] | YYYY-MM-DD |
+
+## File Index
+| File | Type | Purpose |
+|------|------|---------|
+| 00-OVERVIEW.md | Core | Status and navigation (this file) |
+| 01-REQUIREMENTS.md | Core | What to build |
+| 02-IMPLEMENTATION-PLAN.md | Core | How to build |
+| 03-PROGRESS-LOG.md | Core | Session log (append-only) |
+| 04-TESTING-CHECKLIST.md | Core | Test scenarios |
+| 05-ANALYSIS.md | Optional | Feature-specific research |
+| 06-PR-MESSAGE.md | Optional | PR draft |
+
+*Update this table when creating new files*
 
 ## Quick FAQ
 1. **Q**: [Common question]?
    **A**: [Brief answer]
 
-2. **Q**: [Common question]?
-   **A**: [Brief answer]
+<!--
+## Pause Context
+Uncomment this section when using >>pause
+
+**Paused on**: YYYY-MM-DD
+**Reason**: [Why paused]
+
+**State at pause**:
+- [What's done]
+- [What's in progress]
+
+**To resume**:
+1. [First specific step]
+2. [Second step]
+
+**Files in progress**:
+- [file.ts:line - what was being done]
+-->
 
 ---
 **Max Length**: 2 pages (this is the SSOT - keep it scannable)
