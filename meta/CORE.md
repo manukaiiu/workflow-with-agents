@@ -69,9 +69,10 @@ Read [protocols/concept/overview.md](protocols/concept/overview.md) first, then 
 
 **Every session, do this:**
 
-1. **Check for active work**: `ls ai-agent/work/`
-2. **If work exists**: Read that work item's `00-OVERVIEW.md`
-3. **The OVERVIEW tells you**:
+1. **Check work index** (if exists): Read `ai-agent/work/WORK-INDEX.md` for overview
+2. **Or list work folders**: `ls ai-agent/work/`
+3. **If active work exists**: Read that work item's `00-OVERVIEW.md`
+4. **The OVERVIEW tells you**:
    - Current phase and status
    - What to do next
    - Which protocol file to read
@@ -191,6 +192,9 @@ ai-agent/
 │   ├── reference/          ← Conventions, glossary (consult when needed)
 │   └── templates/          ← Document templates
 ├── work/                    ← Active work items
+│   ├── WORK-INDEX.md       ← Index of all work items (optional but helpful)
+│   ├── 001-feat-name/
+│   └── 002-maint-name/
 ├── concepts/                ← Finalized concepts (after >>finalize)
 ├── workplans/               ← Finalized work plans (after >>finalize)
 └── knowledge/               ← Project knowledge base

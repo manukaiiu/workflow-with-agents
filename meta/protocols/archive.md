@@ -63,7 +63,13 @@ Complete these first, then use >>archive
    - Status: "Complete"
    - Completed: [date]
 
-### 4. Confirm to Human
+### 4. Update Work Index
+
+If `ai-agent/work/WORK-INDEX.md` exists:
+- Move entry from "Active Work Items" to "Completed Work Items"
+- Add completion date and one-line summary
+
+### 5. Confirm to Human
 
 ```
 Verifying completion...
@@ -73,9 +79,26 @@ Verifying completion...
 
 Created: archive/YYYY-MM-DD-[name]-FINAL.md
 Updated: 00-OVERVIEW.md (status: Complete)
+Updated: WORK-INDEX.md (moved to Completed)
 
 Work complete! 🎉
 ```
+
+---
+
+## Archive Behavior Clarification
+
+The archive process does **NOT** move the work item folder. Instead:
+
+1. **Work item folder stays in place** (`work/NNN-TYPE-name/`)
+2. **Status updated** to "Complete" in OVERVIEW
+3. **Archive subfolder created** with summary (`work/NNN-TYPE-name/archive/`)
+4. **Core docs preserved** for future reference
+
+This allows:
+- Easy reference to completed work
+- Historical context preserved
+- Clear distinction via status in WORK-INDEX.md
 
 ---
 

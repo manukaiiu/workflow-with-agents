@@ -38,13 +38,17 @@
 |------|------|---------|
 | 00-OVERVIEW.md | Core | Status and navigation (this file) |
 | 01-REQUIREMENTS.md | Core | What to build |
+| 01-INPUTS/ | Optional | Work-item-specific input files |
 | 02-IMPLEMENTATION-PLAN.md | Core | How to build |
 | 03-PROGRESS-LOG.md | Core | Session log (append-only) |
 | 04-TESTING-CHECKLIST.md | Core | Test scenarios |
 | 05-ANALYSIS.md | Optional | Feature-specific research |
 | 06-PR-MESSAGE.md | Optional | PR draft |
+| 90-OUTPUTS/ | Optional | Work-item deliverables |
 
 *Update this table when creating new files*
+
+**Note**: Use `01-INPUTS/` for work-item-specific source files (not project-wide references). Use `90-OUTPUTS/` for deliverables produced by this work item.
 
 ## Quick FAQ
 1. **Q**: [Common question]?

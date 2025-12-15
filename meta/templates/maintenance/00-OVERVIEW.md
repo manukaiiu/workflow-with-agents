@@ -46,11 +46,15 @@
 |------|------|---------|
 | 00-OVERVIEW.md | Core | Status and navigation (this file) |
 | 01-SCOPE.md | Core | What's included |
+| 01-INPUTS/ | Optional | Work-item-specific input files |
 | 02-IMPLEMENTATION-PLAN.md | Core | How to execute |
 | 03-PROGRESS-LOG.md | Core | Session log (append-only) |
 | 04-TESTING-CHECKLIST.md | Core | Test scenarios |
+| 90-OUTPUTS/ | Optional | Work-item deliverables |
 
 *Update this table when creating new files*
+
+**Note**: Use `01-INPUTS/` for work-item-specific source files. Use `90-OUTPUTS/` for deliverables.
 
 <!--
 ## Pause Context

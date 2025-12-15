@@ -68,11 +68,28 @@ project-root/ai-agent/
 | 08 | OPEN-QUESTIONS.md | Concept |
 | 09 | (Reserved) | - |
 
-### Output Files (90+)
+### Input Files (01-INPUTS/)
+
+`01-INPUTS/` - Optional folder for work-item-specific input files
+- Use for sources specific to THIS work item (not project-wide)
+- Contains an INDEX.md listing all inputs (required for concept work)
+- Examples: meeting notes, requirement docs, screenshots, reference materials
+
+**When to use**:
+- Work item has unique source materials
+- Need to track processing status of inputs
+- Want to keep work item self-contained
+
+**Project-wide vs work-item inputs**:
+- Project-wide: Reference from `knowledge/` or project folders
+- Work-item-specific: Copy/place in `01-INPUTS/`
+
+### Output Files (90-OUTPUTS/)
 
 `90-OUTPUTS/` - Standard folder for deliverables
 - Use descriptive names (no numbers)
 - Examples: `template-auth-flow.md`, `api-design.md`
+- Work-item-specific outputs that may be referenced elsewhere
 
 ---
 

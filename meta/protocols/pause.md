@@ -65,7 +65,13 @@ Add brief entry to progress log:
 **Resume instructions**: See 00-OVERVIEW.md Pause Context
 ```
 
-### 4. Confirm to Human
+### 4. Update Work Index
+
+If `ai-agent/work/WORK-INDEX.md` exists:
+- Move entry from "Active Work Items" to "Paused Work Items"
+- Add paused date, reason, and resume command
+
+### 5. Confirm to Human
 
 ```
 Work item paused.

@@ -90,6 +90,16 @@ Ask clarifying questions informed by:
 
 Don't proceed to implementation planning until human answers.
 
+### 9. Update Work Index
+
+If `ai-agent/work/WORK-INDEX.md` exists, add entry to "Active Work Items":
+
+```markdown
+| NNN | TYPE | name | Planning | - | YYYY-MM-DD |
+```
+
+If it doesn't exist, create from template `meta/templates/WORK-INDEX.md`.
+
 ---
 
 ## Response Template
