@@ -192,6 +192,7 @@ When human says these phrases, treat as the corresponding command:
 | Concept workflow overview | [protocols/concept/overview.md](protocols/concept/overview.md) |
 | File naming conventions | [reference/FILE-CONVENTIONS.md](reference/FILE-CONVENTIONS.md) |
 | Where to create/edit files | [reference/OUTPUT-LOCATIONS.md](reference/OUTPUT-LOCATIONS.md) |
+| Jira ticket structure | [reference/TICKET-TEMPLATES.md](reference/TICKET-TEMPLATES.md) |
 | All extraction ID meanings | [reference/GLOSSARY.md](reference/GLOSSARY.md) |
 | Work type comparison | [reference/WORK-TYPES.md](reference/WORK-TYPES.md) |
 
@@ -206,6 +207,9 @@ ai-agent/
 │   ├── protocols/          ← Command details (read on-demand)
 │   ├── reference/          ← Conventions, glossary (consult when needed)
 │   └── templates/          ← Document templates
+├── inbox/                   ← Staged inputs before work items exist
+│   ├── INBOX.md            ← Index of staged inputs
+│   └── [files]/            ← Staged input files
 ├── work/                    ← Active work items
 │   ├── WORK-INDEX.md       ← Index of all work items (optional but helpful)
 │   ├── 001-feat-name/
